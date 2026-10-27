@@ -4,20 +4,21 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { LayoutDashboard, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { ChevronRight, Disc3, Gamepad2, LayoutDashboard, MapPin, Menu, Monitor, Repeat, Search, ShoppingBag, User, X } from "lucide-react";
 import type { PublicUser } from "@/lib/types";
 import { useCart } from "../providers";
+import { WhatsIcon } from "../icons";
 
 const nav = [
-  { href: "/loja", label: "Loja" },
-  { href: "/loja?categoria=jogos", label: "Jogos" },
-  { href: "/loja?categoria=consoles", label: "Consoles" },
-  { href: "/loja?categoria=controles", label: "Controles" },
-  { href: "/#troca", label: "Troca" },
-  { href: "/#visite", label: "Visite" },
+  { href: "/loja", label: "Loja", icon: ShoppingBag, text: "Tudo o que está na prateleira" },
+  { href: "/loja?categoria=jogos", label: "Jogos", icon: Disc3, text: "PS5, PS4, PS3 e Xbox" },
+  { href: "/loja?categoria=consoles", label: "Consoles", icon: Monitor, text: "Revisados na loja" },
+  { href: "/loja?categoria=controles", label: "Controles", icon: Gamepad2, text: "Originais e com garantia" },
+  { href: "/#troca", label: "Troca", icon: Repeat, text: "Avaliamos seus jogos na hora" },
+  { href: "/#visite", label: "Visite", icon: MapPin, text: "Jardim Ranieri, São Paulo" },
 ];
 
-export function Header({ user, announcement }: { user: PublicUser | null; announcement?: string }) {
+export function Header({ user, announcement, whatsapp }: { user: PublicUser | null; announcement?: string; whatsapp?: string }) {
   const { count, setOpen, bump } = useCart();
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
@@ -152,34 +153,92 @@ export function Header({ user, announcement }: { user: PublicUser | null; announ
 
       <AnimatePresence>
         {menu && (
-          <motion.div
-            className="fixed inset-0 z-50 bg-void/95 backdrop-blur-xl lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="flex h-[72px] items-center justify-between px-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Up Games" className="size-11 rounded-full" />
-              <button onClick={() => setMenu(false)} className="grid size-11 place-items-center" aria-label="Fechar menu">
-                <X className="size-6" />
-              </button>
-            </div>
-            <nav className="flex flex-col px-6 pt-6">
-              {[...nav, ...(user?.role === "admin" ? [{ href: "/admin", label: "Painel admin" }] : [])].map((n, i) => (
-                <motion.div
-                  key={n.href}
-                  initial={{ opacity: 0, x: -24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.04 * i, type: "spring", stiffness: 400, damping: 30 }}
-                >
-                  <Link href={n.href} onClick={() => setMenu(false)} className="display block py-2 text-5xl text-chalk">
-                    {n.label}
+          <>
+            <motion.div
+              className="fixed inset-0 z-50 bg-void/70 backdrop-blur-sm lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMenu(false)}
+            />
+            <motion.aside
+              role="dialog"
+              aria-label="Menu"
+              className="fixed inset-y-0 right-0 z-[51] flex w-[88%] max-w-[380px] flex-col border-l border-line bg-deep lg:hidden"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 380, damping: 38 }}
+            >
+              <div className="flex items-center justify-between px-5 py-4">
+                <span className="display text-3xl">
+                  Up<span className="text-ember">.</span>Games
+                </span>
+                <button onClick={() => setMenu(false)} className="grid size-10 place-items-center text-fog hover:text-chalk" aria-label="Fechar menu">
+                  <X className="size-5" />
+                </button>
+              </div>
+
+              <div className="px-5">
+                {user ? (
+                  <Link href="/minha-conta" onClick={() => setMenu(false)} className="chamfer-sm flex items-center gap-3 bg-plate p-3.5">
+                    <span className="chamfer-sm grid size-11 place-items-center bg-ember text-void">
+                      <span className="display text-2xl">{user.name.charAt(0)}</span>
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-semibold">{user.name}</span>
+                      <span className="block text-xs text-fog">Minha conta e pedidos</span>
+                    </span>
+                    <ChevronRight className="size-4 text-dim" />
                   </Link>
-                </motion.div>
-              ))}
-            </nav>
-          </motion.div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link href="/entrar" onClick={() => setMenu(false)} className="btn btn-ember">Entrar</Link>
+                    <Link href="/cadastro" onClick={() => setMenu(false)} className="btn btn-ghost">Criar conta</Link>
+                  </div>
+                )}
+                {user?.role === "admin" && (
+                  <Link href="/admin" onClick={() => setMenu(false)} className="chamfer-sm mt-2 flex items-center gap-3 bg-violet/20 px-3.5 py-3 text-sm font-semibold">
+                    <LayoutDashboard className="size-4 text-r-epico" /> Painel da loja
+                    <ChevronRight className="ml-auto size-4 text-dim" />
+                  </Link>
+                )}
+              </div>
+
+              <nav className="mt-4 flex-1 overflow-y-auto px-3" aria-label="Menu principal">
+                {nav.map((n, i) => (
+                  <motion.div
+                    key={n.href}
+                    initial={{ opacity: 0, x: 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + i * 0.04, type: "spring", stiffness: 420, damping: 34 }}
+                  >
+                    <Link href={n.href} onClick={() => setMenu(false)} className="group flex items-center gap-4 border-b border-line/60 px-2 py-3.5 transition-colors hover:bg-plate/50">
+                      <n.icon className="size-5 shrink-0 text-dim transition-colors group-hover:text-ember" />
+                      <span className="min-w-0 flex-1">
+                        <span className="display block text-[1.7rem] leading-none">{n.label}</span>
+                        <span className="mt-1 block text-xs text-dim">{n.text}</span>
+                      </span>
+                      <ChevronRight className="size-4 text-dim transition-transform group-hover:translate-x-1 group-hover:text-chalk" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+
+              {whatsapp && (
+                <div className="border-t border-line p-5">
+                  <a
+                    href={`https://wa.me/${whatsapp}?text=${encodeURIComponent("Olá, Up Games! Vim pelo site.")}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn w-full bg-[#25d366] text-[#06260f]"
+                  >
+                    <WhatsIcon className="size-5" /> Falar no WhatsApp
+                  </a>
+                </div>
+              )}
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </>

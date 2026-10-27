@@ -12,7 +12,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
   const s = db.settings;
   return (
     <div className="bg-field min-h-dvh">
-      <Header user={user} announcement={s.announcementActive ? s.announcement : undefined} />
+      <Header user={user} announcement={s.announcementActive ? s.announcement : undefined} whatsapp={s.whatsapp} />
       <main>{children}</main>
       <Footer s={s} />
       <CartDrawer freeShippingOver={s.freeShippingOver} />
