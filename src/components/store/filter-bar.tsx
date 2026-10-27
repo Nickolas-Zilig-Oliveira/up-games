@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 
 type Option = { value: string; label: string; count: number };
 
@@ -21,7 +21,6 @@ export function FilterBar({ categories, platforms, total }: { categories: Option
   const pathname = usePathname();
   const sp = useSearchParams();
   const [pending, start] = useTransition();
-  const [q, setQ] = useState(sp.get("q") ?? "");
 
   const categoria = sp.get("categoria") ?? "";
   const plataforma = sp.get("plataforma") ?? "";
@@ -38,14 +37,6 @@ export function FilterBar({ categories, platforms, total }: { categories: Option
     const qs = next.toString();
     start(() => router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false }));
   }
-
-  useEffect(() => {
-    const t = setTimeout(() => {
-      if ((sp.get("q") ?? "") !== q.trim()) set({ q: q.trim() });
-    }, 300);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q]);
 
   const chip = (on: boolean) =>
     `chamfer-sm whitespace-nowrap px-3.5 py-2 text-sm font-semibold transition-colors ${
@@ -96,19 +87,16 @@ export function FilterBar({ categories, platforms, total }: { categories: Option
                 </button>
               ))}
             </div>
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-dim" />
-              <input className="field h-10 w-44 pl-9 text-sm" placeholder="Buscar" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Buscar na loja" />
-            </div>
-            <select className="field h-10 w-auto min-w-[150px] text-sm" value={ordem} onChange={(e) => set({ ordem: e.target.value })} aria-label="Ordenar por">
+            {filtered && (
+              <select className="field h-10 w-auto min-w-[150px] text-sm" value={ordem} onChange={(e) => set({ ordem: e.target.value })} aria-label="Ordenar por">
               {sorts.map(([v, l]) => (
                 <option key={v} value={v}>{l}</option>
               ))}
             </select>
+            )}
             {filtered && (
               <button
                 onClick={() => {
-                  setQ("");
                   start(() => router.push(pathname, { scroll: false }));
                 }}
                 className="flex items-center gap-1 text-sm font-semibold text-ember hover:text-gold"

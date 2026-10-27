@@ -10,15 +10,49 @@ export function PageHeader({ title, text, children }: { title: string; text?: st
   );
 }
 
-export function Panel({ title, action, children, className = "" }: { title?: string; action?: React.ReactNode; children: React.ReactNode; className?: string }) {
+export function Panel({
+  title,
+  action,
+  children,
+  className = "",
+  hint,
+  collapsible,
+  defaultOpen = false,
+}: {
+  title?: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+  /** Uma linha explicando para que serve este bloco. */
+  hint?: string;
+  /** Vira um bloco que abre e fecha (fechado por padrão). */
+  collapsible?: boolean;
+  defaultOpen?: boolean;
+}) {
+  if (collapsible) {
+    return (
+      <details open={defaultOpen} className={`group chamfer-sm bg-deep ${className}`}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden">
+          <span>
+            <span className="block font-semibold">{title}</span>
+            {hint && <span className="mt-0.5 block text-sm text-fog">{hint}</span>}
+          </span>
+          <span className="text-xs font-semibold text-ember group-open:hidden">Abrir</span>
+          <span className="hidden text-xs font-semibold text-dim group-open:inline">Fechar</span>
+        </summary>
+        <div className="px-5 pb-5">{children}</div>
+      </details>
+    );
+  }
   return (
     <section className={`chamfer-sm bg-deep p-5 ${className}`}>
       {(title || action) && (
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className={`${hint ? "mb-1" : "mb-4"} flex items-center justify-between gap-3`}>
           {title && <h2 className="font-semibold">{title}</h2>}
           {action}
         </div>
       )}
+      {hint && <p className="mb-4 text-sm text-fog">{hint}</p>}
       {children}
     </section>
   );

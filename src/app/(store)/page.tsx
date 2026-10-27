@@ -4,16 +4,10 @@ import { catalog, filterProducts } from "@/lib/queries";
 import { ProductCard } from "@/components/product-card";
 import { LootDrop } from "@/components/store/loot-drop";
 import { DragRow } from "@/components/store/drag-row";
-import { CategoryIcon, WhatsIcon } from "@/components/icons";
-
-const reviews = [
-  { text: "Ótimo atendimento, variedades em produtos e boa localização." },
-  { text: "Loja super montada, preços justos. Super indico." },
-  { text: "Bom atendimento, sempre tem jogos lançamentos e novidades." },
-];
+import { WhatsIcon } from "@/components/icons";
 
 export default async function Home() {
-  const { products, categories, settings: s } = await catalog();
+  const { products, settings: s } = await catalog();
   const byId = new Map(products.map((p) => [p.id, p]));
   const drop = s.dropIds
     .map((id) => byId.get(id))
@@ -22,18 +16,15 @@ export default async function Home() {
   const featured = filterProducts(products.filter((p) => p.featured), {}).slice(0, 10);
   // Produtos cadastrados por último ficam no fim da lista: os mais novos vêm primeiro.
   const latest = [...products].filter((p) => p.stock > 0).reverse().slice(0, 10);
-  const platformCounts = s.platforms
-    .map((pl) => ({ name: pl, count: products.filter((p) => p.platform === pl).length }))
-    .filter((p) => p.count > 0);
   const today = new Date().getDay(); // 0 = domingo
   const todayIdx = today === 0 ? 6 : today - 1;
 
   return (
     <>
       {/* HERO */}
-      <section className="relative mx-auto grid max-w-[1320px] items-center gap-10 px-4 pb-16 pt-8 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pb-24 lg:pt-14">
+      <section className="relative mx-auto grid max-w-[1320px] items-center gap-6 px-4 pb-12 pt-5 sm:gap-10 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pb-24 lg:pt-14">
         <div className="relative z-10">
-          <div className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-fog">
+          <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-fog sm:mb-6">
             <span className="flex items-center gap-1.5">
               <Star className="size-4 fill-gold text-gold" />
               <b className="text-chalk">4,8</b> no Google, 208 avaliações
@@ -42,43 +33,18 @@ export default async function Home() {
               <MapPin className="size-4 text-ember" /> Jardim Ranieri, SP
             </span>
           </div>
-          <h1 className="display text-[clamp(3.6rem,8.4vw,8rem)] text-chalk">{s.heroTitle}</h1>
-          <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-fog">{s.heroSubtitle}</p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <Link href="/loja" className="btn btn-ember h-14 px-7 text-base">
+          <h1 className="display text-[clamp(3.1rem,8.4vw,8rem)] text-chalk">{s.heroTitle}</h1>
+          <p className="mt-4 max-w-[52ch] text-base leading-relaxed text-fog sm:mt-6 sm:text-lg">{s.heroSubtitle}</p>
+          <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-9 sm:flex sm:flex-wrap sm:gap-3">
+            <Link href="/loja" className="btn btn-ember h-12 px-3 text-[0.95rem] sm:h-14 sm:px-7 sm:text-base">
               Explorar a loja
             </Link>
-            <Link href="#troca" className="btn btn-ghost h-14 px-7 text-base">
+            <Link href="#troca" className="btn btn-ghost h-12 px-3 text-[0.95rem] sm:h-14 sm:px-7 sm:text-base">
               Trocar meus jogos
             </Link>
           </div>
         </div>
         <LootDrop items={drop} />
-      </section>
-
-      {/* PLATAFORMAS */}
-      <section className="mx-auto max-w-[1320px] px-4 sm:px-6" aria-labelledby="plataformas">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <h2 id="plataformas" className="display text-5xl sm:text-6xl">Escolha seu console</h2>
-        </div>
-        <div className="scrollbar-none -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-          {platformCounts.map((pl) => (
-            <Link
-              key={pl.name}
-              href={`/loja?plataforma=${encodeURIComponent(pl.name)}`}
-              className="group chamfer-r relative flex h-56 w-[148px] shrink-0 flex-col justify-between overflow-hidden bg-deep p-4 transition-[transform,background-color] duration-300 ease-[var(--ease-snap)] hover:-translate-y-2 hover:bg-plate"
-            >
-              <span className="tabular text-sm text-dim">{pl.count} {pl.count === 1 ? "item" : "itens"}</span>
-              <span
-                className="display self-start whitespace-nowrap text-[3.1rem] leading-[0.8] text-chalk transition-colors group-hover:text-ember"
-                style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-              >
-                {pl.name}
-              </span>
-              <span className="absolute inset-x-0 bottom-0 h-1 bg-ember opacity-0 transition-opacity group-hover:opacity-100" />
-            </Link>
-          ))}
-        </div>
       </section>
 
       {/* FILEIRAS: deslizam para o lado */}
@@ -103,27 +69,6 @@ export default async function Home() {
           </DragRow>
         </section>
       ))}
-
-      {/* CATEGORIAS */}
-      <section className="mx-auto mt-24 max-w-[1320px] px-4 sm:px-6" aria-label="Categorias">
-        <ul className="border-t border-line">
-          {categories.map((c) => {
-            const count = products.filter((p) => p.categoryId === c.id).length;
-            return (
-              <li key={c.id} className="border-b border-line">
-                <Link href={`/loja?categoria=${c.slug}`} className="group flex items-center gap-5 py-5 sm:py-6">
-                  <CategoryIcon name={c.icon} className="size-7 shrink-0 text-dim transition-colors group-hover:text-ember" />
-                  <span className="display text-[clamp(2.6rem,7vw,5.5rem)] transition-[color,transform] duration-300 ease-[var(--ease-snap)] group-hover:translate-x-3 group-hover:text-ember">
-                    {c.name}
-                  </span>
-                  <span className="tabular ml-auto text-sm text-fog">{count} itens</span>
-                  <ArrowUpRight className="size-6 shrink-0 text-dim transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-chalk" />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
 
       {/* TROCA */}
       <section id="troca" className="mx-auto mt-24 max-w-[1320px] scroll-mt-28 px-4 sm:px-6">
@@ -158,28 +103,6 @@ export default async function Home() {
               ))}
             </ol>
           </div>
-        </div>
-      </section>
-
-      {/* AVALIAÇÕES */}
-      <section className="mx-auto mt-24 grid max-w-[1320px] gap-10 px-4 sm:px-6 lg:grid-cols-[auto_1fr] lg:items-center">
-        <div className="flex items-end gap-4">
-          <span className="display text-[9rem] leading-[0.75] text-gold">4,8</span>
-          <div className="pb-2">
-            <div className="flex gap-0.5">
-              {Array.from({ length: 5 }).map((_, k) => (
-                <Star key={k} className="size-5 fill-gold text-gold" />
-              ))}
-            </div>
-            <p className="mt-1 text-sm text-fog">208 avaliações no Google</p>
-          </div>
-        </div>
-        <div className="grid gap-3 md:grid-cols-3">
-          {reviews.map((r) => (
-            <blockquote key={r.text} className="border-l-2 border-ember/60 pl-4 text-[1.05rem] leading-relaxed text-chalk">
-              “{r.text}”
-            </blockquote>
-          ))}
         </div>
       </section>
 

@@ -37,7 +37,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
                 <span key={k} className="h-2.5 flex-1 -skew-x-[20deg]" style={{ background: k < Math.round(xp * 12) ? "var(--color-gold)" : "rgb(255 255 255 / 0.08)" }} />
               ))}
             </div>
-            <p className="mt-1.5 text-xs text-dim">Cada compra enche a barra. Quem sobe de nível ganha condições especiais na loja.</p>
           </div>
         </div>
       </div>

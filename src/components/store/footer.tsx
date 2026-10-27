@@ -51,15 +51,6 @@ export function Footer({ s }: { s: Settings }) {
           <p className="mt-2 text-sm text-fog">{s.phone}</p>
         </div>
       </div>
-      <div className="mx-auto max-w-[1320px] px-4 sm:px-6">
-        <p
-          className="display pointer-events-none select-none text-center text-transparent leading-[0.75]"
-          style={{ fontSize: "clamp(5rem, 22vw, 20rem)", WebkitTextStroke: "1px rgb(190 160 255 / 0.16)" }}
-          aria-hidden
-        >
-          Up Games
-        </p>
-      </div>
       <div className="border-t border-line">
         <p className="mx-auto max-w-[1320px] px-4 py-5 text-xs text-dim sm:px-6">
           © {new Date().getFullYear()} Up Games. Preços e estoque sujeitos a alteração.

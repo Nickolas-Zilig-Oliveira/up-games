@@ -70,7 +70,7 @@ export function SettingsForm({
   return (
     <div className="space-y-4 pb-24">
       <div className="grid gap-4 xl:grid-cols-2">
-        <Panel title="Topo da página inicial">
+        <Panel title="Título da página inicial" hint="A frase grande e o texto que abrem o site." collapsible defaultOpen>
           <div className="space-y-4">
             <div>
               <label className="label" htmlFor="s-ht">Título grande</label>
@@ -83,7 +83,7 @@ export function SettingsForm({
           </div>
         </Panel>
 
-        <Panel title="Aviso no topo do site">
+        <Panel title="Faixa de aviso" hint="A faixa laranja no topo, boa para divulgar um cupom." collapsible>
           <div className="space-y-4">
             <label className="flex cursor-pointer items-center gap-3 text-sm">
               <input type="checkbox" className="size-5 accent-[var(--color-ember)]" checked={s.announcementActive} onChange={(e) => setS((x) => ({ ...x, announcementActive: e.target.checked }))} />
@@ -100,7 +100,7 @@ export function SettingsForm({
         </Panel>
       </div>
 
-      <Panel title="Drop do topo" action={<span className="text-xs text-dim">{s.dropIds.length} de 8 itens</span>}>
+      <Panel title="Produtos que caem na página inicial" hint={`${s.dropIds.length} de 8 escolhidos. O primeiro aparece quando a página abre.`} collapsible>
         <p className="mb-4 text-sm text-fog">Os produtos que caem no feixe de luz da página inicial, na ordem abaixo. O primeiro aparece quando a página abre.</p>
         <ol className="space-y-1.5">
           {s.dropIds.map((id, i) => {
@@ -132,7 +132,7 @@ export function SettingsForm({
       </Panel>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <Panel title="Seção de troca">
+        <Panel title="Seção de troca de jogos" hint="O bloco que convida o cliente a trocar jogos usados." collapsible>
           <div className="space-y-4">
             <div>
               <label className="label" htmlFor="s-tt">Título</label>
@@ -145,7 +145,7 @@ export function SettingsForm({
           </div>
         </Panel>
 
-        <Panel title="Entrega">
+        <Panel title="Entrega e plataformas" hint="Taxa de entrega, frete grátis e lista de consoles." collapsible>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="label" htmlFor="s-df">Taxa de entrega (R$)</label>
@@ -165,7 +165,7 @@ export function SettingsForm({
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <Panel title="Contato e redes">
+        <Panel title="Contato e redes sociais" hint="WhatsApp, endereço e links que aparecem no site." collapsible>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="label" htmlFor="s-wa">WhatsApp (só números, com 55)</label>
@@ -194,7 +194,7 @@ export function SettingsForm({
           </div>
         </Panel>
 
-        <Panel title="Horário de funcionamento">
+        <Panel title="Horário de funcionamento" hint="Os dias e horários mostrados na seção Passa na loja." collapsible>
           <ul className="space-y-2">
             {s.hours.map((h, i) => {
               const upd = (patch: Partial<typeof h>) => setS((x) => ({ ...x, hours: x.hours.map((y, k) => (k === i ? { ...y, ...patch } : y)) }));
@@ -216,7 +216,7 @@ export function SettingsForm({
       </div>
 
       <div id="demo" className="scroll-mt-6">
-        <Panel title="Dados de demonstração">
+        <Panel title="Pedidos e clientes de exemplo" hint="Servem só para o painel não começar vazio." collapsible>
           {demoOrders === 0 ? (
             <p className="text-sm text-fog">Não há dados de demonstração. Os números do painel são só das vendas reais.</p>
           ) : confirmDemo ? (

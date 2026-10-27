@@ -36,6 +36,35 @@
 html {
   background: var(--color-void);
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
+}
+
+/* Sem zoom por toque duplo, e a página não "balança" para os lados */
+html,
+body,
+a,
+button,
+input,
+select,
+textarea,
+label,
+summary {
+  touch-action: manipulation;
+}
+body {
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+/* iPhone dá zoom ao tocar num campo com letra menor que 16px */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 body {

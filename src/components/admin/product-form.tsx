@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, Reorder } from "motion/react";
 import { ImagePlus, Loader2, Trash2, X } from "lucide-react";
 import type { Category, Product, Rarity } from "@/lib/types";
-import { money, rarityLabel } from "@/lib/format";
+import { rarityLabel } from "@/lib/format";
 import { api } from "@/lib/client";
 import { useToast } from "../providers";
-import { ProductArt } from "../product-art";
 import { Panel } from "./ui";
 
 const rarities: Rarity[] = ["comum", "raro", "epico", "lendario"];
@@ -98,20 +97,14 @@ export function ProductForm({ categories, platforms, product }: { categories: Ca
     router.refresh();
   }
 
-  const cat = categories.find((c) => c.id === f.categoryId);
-
   return (
     <form onSubmit={save} className="grid gap-4 xl:grid-cols-[1fr_360px]">
       <div className="space-y-4">
         <Panel title="Informações">
           <div className="grid gap-4 sm:grid-cols-6">
-            <div className="sm:col-span-4">
-              <label className="label" htmlFor="p-name">Nome</label>
+            <div className="sm:col-span-6">
+              <label className="label" htmlFor="p-name">Nome do produto</label>
               <input id="p-name" className="field" value={f.name} onChange={set("name")} placeholder="Ex.: God of War Ragnarök" required />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="label" htmlFor="p-sku">Código (SKU)</label>
-              <input id="p-sku" className="field" value={f.sku} onChange={set("sku")} placeholder="Gerado se vazio" />
             </div>
             <div className="sm:col-span-6">
               <label className="label" htmlFor="p-desc">Descrição</label>
@@ -140,34 +133,40 @@ export function ProductForm({ categories, platforms, product }: { categories: Ca
         </Panel>
 
         <Panel title="Preço e estoque">
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="label" htmlFor="p-price">Preço de venda (R$)</label>
               <input id="p-price" className="field tabular" inputMode="decimal" value={f.price} onChange={set("price")} placeholder="199,90" required />
             </div>
             <div>
-              <label className="label" htmlFor="p-cmp">Preço "de" (riscado)</label>
-              <input id="p-cmp" className="field tabular" inputMode="decimal" value={f.comparePrice} onChange={set("comparePrice")} placeholder="Opcional" />
-            </div>
-            <div>
-              <label className="label" htmlFor="p-cost">Custo (R$)</label>
-              <input id="p-cost" className="field tabular" inputMode="decimal" value={f.cost} onChange={set("cost")} placeholder="Para o lucro no painel" />
-            </div>
-            <div>
-              <label className="label" htmlFor="p-stock">{product ? "Estoque atual" : "Estoque inicial"}</label>
+              <label className="label" htmlFor="p-stock">{product ? "Quantidade em estoque" : "Quantidade inicial em estoque"}</label>
               <input id="p-stock" className="field tabular" inputMode="numeric" value={f.stock} onChange={set("stock")} />
             </div>
-            <div>
-              <label className="label" htmlFor="p-min">Alertar quando chegar em</label>
-              <input id="p-min" className="field tabular" inputMode="numeric" value={f.minStock} onChange={set("minStock")} />
-            </div>
-            {num(f.price) > 0 && num(f.cost) > 0 && (
-              <div className="self-end pb-3 text-sm text-fog">
-                Margem: <b className="tabular text-chalk">{Math.round((1 - num(f.cost) / num(f.price)) * 100)}%</b>
-              </div>
-            )}
           </div>
-          {product && <p className="mt-3 text-xs text-dim">Mudar o estoque aqui registra um ajuste no histórico. Para entradas de mercadoria, use a tela Estoque.</p>}
+          <details className="group mt-5 border-t border-line pt-4">
+            <summary className="cursor-pointer text-sm font-semibold text-fog hover:text-chalk">Mais opções (código, preço riscado, custo, aviso de estoque)</summary>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="label" htmlFor="p-sku">Código do produto</label>
+                <input id="p-sku" className="field" value={f.sku} onChange={set("sku")} placeholder="Gerado sozinho se ficar vazio" />
+              </div>
+              <div>
+                <label className="label" htmlFor="p-cmp">Preço antigo (aparece riscado)</label>
+                <input id="p-cmp" className="field tabular" inputMode="decimal" value={f.comparePrice} onChange={set("comparePrice")} placeholder="Deixe vazio se não houver" />
+              </div>
+              <div>
+                <label className="label" htmlFor="p-cost">Quanto você pagou (custo)</label>
+                <input id="p-cost" className="field tabular" inputMode="decimal" value={f.cost} onChange={set("cost")} placeholder="Opcional" />
+                {num(f.price) > 0 && num(f.cost) > 0 && (
+                  <p className="mt-1.5 text-xs text-fog">Margem de {Math.round((1 - num(f.cost) / num(f.price)) * 100)}%</p>
+                )}
+              </div>
+              <div>
+                <label className="label" htmlFor="p-min">Avisar quando restar até</label>
+                <input id="p-min" className="field tabular" inputMode="numeric" value={f.minStock} onChange={set("minStock")} />
+              </div>
+            </div>
+          </details>
         </Panel>
 
         <Panel title="Fotos" action={<span className="text-xs text-dim">Arraste para reordenar · a primeira é a capa</span>}>
@@ -240,23 +239,7 @@ export function ProductForm({ categories, platforms, product }: { categories: Ca
       </div>
 
       <div className="space-y-4 xl:sticky xl:top-6 xl:self-start">
-        <Panel title="Prévia na loja">
-          <div data-rarity={f.rarity} className="chamfer edge" style={{ background: "color-mix(in srgb, var(--r) 50%, transparent)" }}>
-            <div className="chamfer bg-deep">
-              <div className="aspect-[4/3] overflow-hidden">
-                <ProductArt image={images[0]} name={f.name || "Produto"} platform={f.platform} rarity={f.rarity} icon={cat?.icon ?? "package"} />
-              </div>
-              <div className="h-[3px]" style={{ background: "linear-gradient(90deg, transparent, var(--r), transparent)" }} />
-              <div className="p-4">
-                <p className="rarity-text text-xs font-semibold">{rarityLabel[f.rarity]}</p>
-                <p className="mt-1 font-semibold">{f.name || "Nome do produto"}</p>
-                <p className="tabular mt-1 text-lg font-bold">{money(num(f.price))}</p>
-              </div>
-            </div>
-          </div>
-        </Panel>
-
-        <Panel title="Raridade">
+        <Panel title="Cor do item na loja (raridade)">
           <div className="grid grid-cols-2 gap-2">
             {rarities.map((r) => (
               <button
@@ -272,12 +255,12 @@ export function ProductForm({ categories, platforms, product }: { categories: Ca
               </button>
             ))}
           </div>
-          <p className="mt-3 text-xs text-dim">Define a cor do item na loja. Use lendário para os mais desejados.</p>
+          <p className="mt-3 text-xs text-dim">Só muda a cor do cartão. Use lendário para os itens mais desejados.</p>
         </Panel>
 
-        <Panel title="Visibilidade">
+        <Panel title="Aparecer no site">
           <label className="flex cursor-pointer items-center justify-between gap-3 py-1.5 text-sm">
-            Mostrar na loja
+            Mostrar este produto na loja
             <input type="checkbox" className="size-5 accent-[var(--color-ember)]" checked={f.active} onChange={(e) => setF((s) => ({ ...s, active: e.target.checked }))} />
           </label>
           <label className="flex cursor-pointer items-center justify-between gap-3 py-1.5 text-sm">

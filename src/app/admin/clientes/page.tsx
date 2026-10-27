@@ -28,7 +28,27 @@ export default async function Clientes({ searchParams }: PageProps<"/admin/clien
     <>
       <PageHeader title="Clientes" text={`${db.users.filter((u) => u.role === "customer").length} clientes cadastrados, ordenados por quanto já compraram.`} />
       <AdminSearch placeholder="Buscar por nome, e-mail ou telefone" />
-      <Table>
+      <>
+        <ul className="space-y-2 md:hidden">
+          {users.map((u) => (
+            <li key={u.id} className="chamfer-sm bg-deep p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">{u.name}</p>
+                  <p className="truncate text-sm text-dim">{u.email}</p>
+                  {u.phone && <p className="text-sm text-fog">{u.phone}</p>}
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="tabular font-bold">{money(u.spent)}</p>
+                  <p className="text-xs text-dim">{u.orders} {u.orders === 1 ? 'pedido' : 'pedidos'}</p>
+                </div>
+              </div>
+              <div className="mt-3">{u.id === me.id ? <span className="text-xs font-semibold text-gold">Você (admin)</span> : <RoleToggle id={u.id} role={u.role} />}</div>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden md:block">
+<Table>
         <thead>
           <tr>
             <th>Cliente</th>
@@ -55,6 +75,8 @@ export default async function Clientes({ searchParams }: PageProps<"/admin/clien
           ))}
         </tbody>
       </Table>
+        </div>
+      </>
     </>
   );
 }

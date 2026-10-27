@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Boxes, Plus, ReceiptText } from "lucide-react";
 import { read } from "@/lib/db";
 import { dashboard } from "@/lib/analytics";
-import { dateTimeBR, money, statusLabel } from "@/lib/format";
+import { dateTimeBR, money } from "@/lib/format";
 import { PageHeader, Panel } from "@/components/admin/ui";
 import { BarList, RevenueChart } from "@/components/admin/charts";
 import { StatusBadge } from "@/components/status-badge";
-import type { OrderStatus } from "@/lib/types";
 
 const ranges = [
   { days: 7, label: "7 dias" },
@@ -14,17 +13,8 @@ const ranges = [
   { days: 90, label: "90 dias" },
 ];
 
-const statusColor: Record<OrderStatus, string> = {
-  pendente: "#ffc93c",
-  pago: "#3fa9ff",
-  separando: "#b264ff",
-  enviado: "#ff8f3f",
-  entregue: "#3ddc97",
-  cancelado: "#ff4d6d",
-};
-
 function Delta({ v }: { v: number }) {
-  if (!isFinite(v) || v === 0) return <span className="text-xs text-dim">sem variação</span>;
+  if (!isFinite(v) || v === 0) return null;
   const up = v > 0;
   return (
     <span className={`inline-flex items-center gap-0.5 text-xs font-semibold ${up ? "text-ok" : "text-bad"}`}>
@@ -40,17 +30,29 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
   const db = await read();
   const d = dashboard(db, days);
   const hasDemo = db.orders.some((o) => o.demo);
+  const waiting = db.orders.filter((o) => o.status === "pendente" || o.status === "pago").length;
 
-  const kpis = [
-    { label: "Faturamento", value: money(d.revenue), delta: <Delta v={d.revenueDelta} /> },
-    { label: "Pedidos", value: String(d.orders), delta: <Delta v={d.ordersDelta} /> },
-    { label: "Ticket médio", value: money(d.ticket), delta: <span className="text-xs text-dim">por pedido</span> },
-    { label: "Lucro estimado", value: money(d.profit), delta: <span className="text-xs text-dim">preço − custo cadastrado</span> },
+  const actions = [
+    {
+      href: "/admin/pedidos?status=pendente",
+      icon: ReceiptText,
+      title: waiting ? `${waiting} ${waiting === 1 ? "pedido" : "pedidos"} para atender` : "Nenhum pedido esperando",
+      text: waiting ? "Confirme o pagamento e separe os itens." : "Tudo em dia por aqui.",
+      hot: waiting > 0,
+    },
+    {
+      href: "/admin/produtos?estoque=baixo",
+      icon: Boxes,
+      title: d.lowStock.length ? `${d.lowStock.length} ${d.lowStock.length === 1 ? "produto" : "produtos"} acabando` : "Estoque em dia",
+      text: d.lowStock.length ? "Veja quais repor." : "Nada com estoque baixo.",
+      hot: d.lowStock.length > 0,
+    },
+    { href: "/admin/produtos/novo", icon: Plus, title: "Cadastrar produto", text: "Nome, preço, fotos e estoque.", hot: false },
   ];
 
   return (
     <>
-      <PageHeader title="Visão geral" text="Como a loja está indo, o que precisa de atenção e o que está vendendo.">
+      <PageHeader title="Início" text="O que precisa da sua atenção e como a loja está vendendo.">
         <div className="chamfer-sm flex bg-deep p-1" role="group" aria-label="Período">
           {ranges.map((r) => (
             <Link
@@ -64,66 +66,47 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
         </div>
       </PageHeader>
 
-      {hasDemo && (
-        <p className="mb-6 border-l-2 border-gold bg-gold/10 px-4 py-3 text-sm text-chalk">
-          Os pedidos e clientes atuais são de demonstração, para você ver o painel funcionando.{" "}
-          <Link href="/admin/loja#demo" className="font-semibold text-gold underline-offset-4 hover:underline">Apagar dados de demonstração</Link>
-        </p>
-      )}
+      <div className="grid gap-3 md:grid-cols-3">
+        {actions.map((a) => (
+          <Link
+            key={a.href}
+            href={a.href}
+            className={`chamfer-sm group flex items-center gap-4 p-5 transition-colors ${a.hot ? "bg-ember/15 ring-1 ring-inset ring-ember/50 hover:bg-ember/25" : "bg-deep hover:bg-plate"}`}
+          >
+            <a.icon className={`size-6 shrink-0 ${a.hot ? "text-ember" : "text-dim"}`} />
+            <span>
+              <span className="block font-semibold">{a.title}</span>
+              <span className="block text-sm text-fog">{a.text}</span>
+            </span>
+            <ArrowUpRight className="ml-auto size-5 shrink-0 text-dim transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-chalk" />
+          </Link>
+        ))}
+      </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {kpis.map((k) => (
-          <div key={k.label} className="chamfer-sm bg-deep p-5">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {[
+          { label: "Vendas", value: money(d.revenue), delta: <Delta v={d.revenueDelta} /> },
+          { label: "Pedidos", value: String(d.orders), delta: <Delta v={d.ordersDelta} /> },
+          { label: "Ticket médio", value: money(d.ticket), delta: <span className="text-xs text-dim">valor médio por pedido</span> },
+        ].map((k, i) => (
+          <div key={k.label} className={`chamfer-sm bg-deep p-4 sm:p-5 ${i === 0 ? "col-span-2 sm:col-span-1" : ""}`}>
             <p className="text-sm text-fog">{k.label}</p>
-            <p className="tabular mt-2 text-2xl font-bold sm:text-3xl">{k.value}</p>
-            <div className="mt-1.5">{k.delta}</div>
+            <p className="tabular mt-1.5 text-xl font-bold sm:text-3xl">{k.value}</p>
+            <div className="mt-1 min-h-4">{k.delta}</div>
           </div>
         ))}
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_340px]">
-        <Panel title={`Faturamento por dia — últimos ${days} dias`}>
+        <Panel title={`Vendas por dia — últimos ${days} dias`}>
           <RevenueChart data={d.series} />
         </Panel>
-        <Panel title="Pedidos por status">
-          <BarList
-            format="int"
-            items={d.byStatus.map((s) => ({ label: statusLabel[s.status], value: s.count, color: statusColor[s.status] }))}
-          />
-        </Panel>
-      </div>
-
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <Panel title="Mais vendidos" action={<Link href="/admin/produtos" className="text-xs font-semibold text-ember">Produtos</Link>}>
+        <Panel title="Mais vendidos">
           {d.top.length ? (
             <BarList items={d.top.map((t) => ({ label: t.name, value: t.revenue, sub: `${t.qty} un.` }))} />
           ) : (
-            <p className="text-sm text-fog">Sem vendas no período.</p>
+            <p className="text-sm text-fog">Ainda não há vendas neste período.</p>
           )}
-        </Panel>
-        <Panel title="Vendas por categoria">
-          <BarList items={d.byCat.map((c) => ({ label: c.name, value: c.revenue }))} />
-        </Panel>
-        <Panel
-          title="Estoque baixo"
-          action={<Link href="/admin/estoque" className="text-xs font-semibold text-ember">Repor</Link>}
-        >
-          {d.lowStock.length === 0 ? (
-            <p className="text-sm text-fog">Tudo abastecido.</p>
-          ) : (
-            <ul className="space-y-2">
-              {d.lowStock.slice(0, 7).map((p) => (
-                <li key={p.id} className="flex items-center gap-3 text-sm">
-                  <AlertTriangle className={`size-4 shrink-0 ${p.stock === 0 ? "text-bad" : "text-gold"}`} />
-                  <Link href={`/admin/produtos/${p.id}`} className="truncate hover:text-ember">{p.name}</Link>
-                  <span className={`tabular ml-auto shrink-0 font-semibold ${p.stock === 0 ? "text-bad" : "text-gold"}`}>
-                    {p.stock === 0 ? "esgotado" : `${p.stock} un.`}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <p className="mt-4 border-t border-line pt-3 text-xs text-dim">Valor em estoque (custo): <b className="tabular text-chalk">{money(d.stockValue)}</b></p>
         </Panel>
       </div>
 
@@ -134,7 +117,7 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
               <Link href={`/admin/pedidos/${o.id}`} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3 text-sm hover:text-ember">
                 <span className="tabular font-bold">#{o.number}</span>
                 <span className="min-w-0 flex-1 truncate">{o.customer.name}</span>
-                <span className="text-dim">{dateTimeBR(o.createdAt)}</span>
+                <span className="hidden text-dim sm:inline">{dateTimeBR(o.createdAt)}</span>
                 <StatusBadge status={o.status} />
                 <span className="tabular w-24 text-right font-semibold">{money(o.total)}</span>
               </Link>
@@ -142,6 +125,13 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
           ))}
         </ul>
       </Panel>
+
+      {hasDemo && (
+        <p className="mt-6 text-sm text-dim">
+          Os pedidos e clientes de exemplo ajudam a ver o painel funcionando.{" "}
+          <Link href="/admin/loja#demo" className="font-semibold text-gold underline-offset-4 hover:underline">Apagar exemplos</Link>
+        </p>
+      )}
     </>
   );
 }

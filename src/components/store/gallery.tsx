@@ -13,7 +13,7 @@ export function Gallery(props: { images: string[]; name: string; platform: strin
     <div className="lg:sticky lg:top-24 lg:self-start">
       <div className="chamfer p-[2px]" style={{ background: "linear-gradient(160deg, var(--r), transparent 55%)", "--cut": "26px" } as React.CSSProperties}>
         <div
-          className="chamfer relative aspect-square overflow-hidden bg-deep"
+          className="chamfer relative aspect-[5/4] overflow-hidden bg-deep sm:aspect-square"
           style={{ "--cut": "26px" } as React.CSSProperties}
           onMouseMove={(e) => {
             if (!images.length) return;

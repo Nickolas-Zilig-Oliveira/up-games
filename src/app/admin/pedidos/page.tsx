@@ -37,7 +37,27 @@ export default async function AdminOrders({ searchParams }: PageProps<"/admin/pe
       {list.length === 0 ? (
         <Empty title="Nenhum pedido" text="Nenhum pedido com esse filtro." />
       ) : (
-        <Table>
+        <>
+        <ul className="space-y-2 md:hidden">
+          {list.map((o) => (
+            <li key={o.id}>
+              <Link href={`/admin/pedidos/${o.id}`} className="chamfer-sm block bg-deep p-4 active:bg-plate">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="tabular text-lg font-bold">#{o.number}</span>
+                  <StatusBadge status={o.status} />
+                </div>
+                <p className="mt-1 font-medium">{o.customer.name}</p>
+                <p className="truncate text-sm text-fog">{o.items.map((i) => `${i.qty}× ${i.name}`).join(", ")}</p>
+                <div className="mt-2 flex items-center justify-between text-sm">
+                  <span className="text-dim">{dateTimeBR(o.createdAt)} · {o.delivery === 'retirada' ? 'Retirada' : 'Entrega'}</span>
+                  <span className="tabular font-bold">{money(o.total)}</span>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden md:block">
+<Table>
           <thead>
             <tr>
               <th>Pedido</th>
@@ -67,6 +87,8 @@ export default async function AdminOrders({ searchParams }: PageProps<"/admin/pe
             ))}
           </tbody>
         </Table>
+        </div>
+      </>
       )}
     </>
   );

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
-  Boxes,
   ExternalLink,
   LayoutDashboard,
   Menu,
@@ -19,50 +18,66 @@ import {
 } from "lucide-react";
 import { LogoutButton } from "../store/logout-button";
 
-const items = [
-  { href: "/admin", label: "Visão geral", icon: LayoutDashboard },
-  { href: "/admin/pedidos", label: "Pedidos", icon: ReceiptText, badge: "pedidos" as const },
-  { href: "/admin/produtos", label: "Produtos", icon: Package },
-  { href: "/admin/estoque", label: "Estoque", icon: Boxes, badge: "estoque" as const },
-  { href: "/admin/categorias", label: "Categorias", icon: Tags },
-  { href: "/admin/cupons", label: "Cupons", icon: Ticket },
-  { href: "/admin/clientes", label: "Clientes", icon: Users },
-  { href: "/admin/loja", label: "Aparência e loja", icon: Settings },
+const groups = [
+  {
+    title: null as string | null,
+    items: [
+      { href: "/admin", label: "Início", icon: LayoutDashboard },
+      { href: "/admin/pedidos", label: "Pedidos", icon: ReceiptText, badge: true },
+      { href: "/admin/produtos", label: "Produtos e estoque", icon: Package },
+    ],
+  },
+  {
+    title: "Configurar a loja",
+    items: [
+      { href: "/admin/categorias", label: "Categorias", icon: Tags },
+      { href: "/admin/cupons", label: "Cupons", icon: Ticket },
+      { href: "/admin/clientes", label: "Clientes", icon: Users },
+      { href: "/admin/loja", label: "Textos do site", icon: Settings },
+    ],
+  },
 ];
 
-export function AdminNav({ user, badges }: { user: { name: string; email: string }; badges: { pedidos: number; estoque: number } }) {
+export function AdminNav({ user, badges }: { user: { name: string; email: string }; badges: { pedidos: number } }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [path]);
 
   const list = (
-    <nav className="flex flex-col gap-0.5" aria-label="Painel">
-      {items.map((it) => {
-        const on = it.href === "/admin" ? path === "/admin" : path.startsWith(it.href);
-        const count = it.badge ? badges[it.badge] : 0;
-        return (
-          <Link
-            key={it.href}
-            href={it.href}
-            className={`relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
-              on ? "text-chalk" : "text-fog hover:bg-deep hover:text-chalk"
-            }`}
-          >
-            {on && (
-              <motion.span
-                layoutId="admin-nav"
-                className="chamfer-sm absolute inset-0 bg-plate"
-                transition={{ type: "spring", stiffness: 500, damping: 40 }}
-              />
-            )}
-            <it.icon className={`relative size-4 ${on ? "text-ember" : ""}`} />
-            <span className="relative">{it.label}</span>
-            {count > 0 && (
-              <span className={`tabular relative ml-auto px-1.5 text-xs font-bold ${it.badge === "estoque" ? "text-ember" : "text-gold"}`}>{count}</span>
-            )}
-          </Link>
-        );
-      })}
+    <nav className="flex flex-col gap-5" aria-label="Painel">
+      {groups.map((g) => (
+        <div key={g.title ?? "main"} className="flex flex-col gap-0.5">
+          {g.title && <p className="mb-1 px-3 text-xs font-semibold text-dim">{g.title}</p>}
+          {g.items.map((it) => {
+            const on = it.href === "/admin" ? path === "/admin" : path.startsWith(it.href);
+            const count = it.badge ? badges.pedidos : 0;
+            return (
+              <Link
+                key={it.href}
+                href={it.href}
+                className={`relative flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
+                  on ? "text-chalk" : "text-fog hover:bg-deep hover:text-chalk"
+                }`}
+              >
+                {on && (
+                  <motion.span
+                    layoutId="admin-nav"
+                    className="chamfer-sm absolute inset-0 bg-plate"
+                    transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  />
+                )}
+                <it.icon className={`relative size-4 ${on ? "text-ember" : ""}`} />
+                <span className="relative">{it.label}</span>
+                {count > 0 && (
+                  <span className="tabular relative ml-auto bg-gold px-1.5 text-xs font-bold text-void" title={`${count} pedidos para atender`}>
+                    {count}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
     </nav>
   );
 

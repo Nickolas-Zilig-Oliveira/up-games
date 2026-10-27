@@ -26,7 +26,7 @@ export default async function EditProduct({ params }: PageProps<"/admin/produtos
         </Link>
       </PageHeader>
       <ProductForm categories={db.categories} platforms={db.settings.platforms} product={p} />
-      <Panel title="Movimentações de estoque" className="mt-6">
+      <Panel title="Histórico de estoque" hint="Toda entrada, saída e venda deste produto." collapsible className="mt-6">
         {moves.length === 0 ? (
           <p className="text-sm text-fog">Nenhuma movimentação ainda.</p>
         ) : (

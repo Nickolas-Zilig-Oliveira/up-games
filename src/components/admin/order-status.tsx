@@ -32,22 +32,26 @@ export function OrderStatusControl({ id, status }: { id: string; status: OrderSt
           {loading === next ? "Atualizando…" : `Marcar como ${statusLabel[next].toLowerCase()}`}
         </button>
       )}
-      <input className="field h-10 text-sm" placeholder="Observação (opcional, ex.: código de rastreio)" value={note} onChange={(e) => setNote(e.target.value)} />
-      <div className="grid grid-cols-2 gap-1.5">
-        {(Object.keys(statusLabel) as OrderStatus[])
-          .filter((s) => s !== status && s !== next)
-          .map((s) => (
-            <button
-              key={s}
-              onClick={() => change(s)}
-              disabled={!!loading}
-              className={`chamfer-sm px-2 py-2 text-xs font-semibold transition-colors ${s === "cancelado" ? "bg-bad/10 text-bad hover:bg-bad/20" : "bg-plate text-fog hover:text-chalk"}`}
-            >
-              {statusLabel[s]}
-            </button>
-          ))}
-      </div>
-      <p className="text-xs text-dim">Cancelar devolve os itens ao estoque automaticamente.</p>
+      {status !== "entregue" && status !== "cancelado" && (
+        <input className="field h-10 text-sm" placeholder="Recado para o histórico (opcional)" value={note} onChange={(e) => setNote(e.target.value)} />
+      )}
+      <details className="border-t border-line pt-3">
+        <summary className="cursor-pointer text-sm text-fog hover:text-chalk">Outras opções</summary>
+        <div className="mt-3 grid grid-cols-2 gap-1.5">
+          {(Object.keys(statusLabel) as OrderStatus[])
+            .filter((s) => s !== status && s !== next && s !== "cancelado")
+            .map((s) => (
+              <button key={s} onClick={() => change(s)} disabled={!!loading} className="chamfer-sm bg-plate px-2 py-2 text-xs font-semibold text-fog transition-colors hover:text-chalk">
+                {statusLabel[s]}
+              </button>
+            ))}
+        </div>
+        {status !== "cancelado" && (
+          <button onClick={() => change("cancelado")} disabled={!!loading} className="chamfer-sm mt-2 w-full bg-bad/10 px-2 py-2 text-xs font-semibold text-bad hover:bg-bad/20">
+            Cancelar pedido (os itens voltam ao estoque)
+          </button>
+        )}
+      </details>
     </div>
   );
 }

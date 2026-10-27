@@ -3,13 +3,13 @@ import { read } from "@/lib/db";
 import { PageHeader } from "@/components/admin/ui";
 import { SettingsForm } from "@/components/admin/settings-form";
 
-export const metadata: Metadata = { title: "Aparência e loja" };
+export const metadata: Metadata = { title: "Textos do site" };
 
 export default async function LojaSettings() {
   const db = await read();
   return (
     <>
-      <PageHeader title="Aparência e loja" text="Tudo o que aparece no site: textos do topo, aviso, drop, contato, horários e entrega." />
+      <PageHeader title="Textos do site" text="Os textos, contatos e horários que os clientes veem. Abra um bloco, edite e clique em Salvar alterações." />
       <SettingsForm
         settings={db.settings}
         products={db.products.filter((p) => p.active).map((p) => ({ id: p.id, name: p.name, platform: p.platform }))}
