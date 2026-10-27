@@ -60,11 +60,11 @@ export function LootDrop({ items }: { items: DropItem[] }) {
         <AnimatePresence mode="popLayout">
           <motion.div
             key={`${item.id}-${rolls}`}
-            className="absolute left-1/2 top-[14%] w-[54%] -translate-x-1/2"
+            className="absolute left-1/2 top-[9%] w-[50%] -translate-x-1/2"
             initial={reduce ? { opacity: 0 } : { y: -180, opacity: 0, rotate: -8, scale: 0.86 }}
             animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { y: 40, opacity: 0, scale: 0.9, transition: { duration: 0.18 } }}
-            transition={{ type: "spring", stiffness: 260, damping: 18, mass: 0.9, delay: rolls ? 0.05 : 0.35 }}
+            transition={{ type: "spring", stiffness: 260, damping: 18, mass: 0.9, delay: rolls ? 0.05 : 0 }}
           >
             <Link href={`/produto/${item.slug}`} className="block" aria-label={item.name}>
               <div className="chamfer p-[2px]" style={{ background: "linear-gradient(160deg, var(--r), transparent 60%)" }}>
@@ -80,7 +80,7 @@ export function LootDrop({ items }: { items: DropItem[] }) {
                 style={{ background: "radial-gradient(closest-side, color-mix(in srgb, var(--r) 65%, white 10%), transparent)" }}
                 initial={{ opacity: 0, scale: 0.4 }}
                 animate={{ opacity: [0, 0.9, 0], scale: [0.4, 1.1, 1.3] }}
-                transition={{ duration: 0.7, delay: rolls ? 0.28 : 0.6, times: [0, 0.3, 1] }}
+                transition={{ duration: 0.7, delay: rolls ? 0.28 : 0.3, times: [0, 0.3, 1] }}
               />
             )}
           </motion.div>
@@ -94,8 +94,8 @@ export function LootDrop({ items }: { items: DropItem[] }) {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
-          transition={{ type: "spring", stiffness: 380, damping: 32, delay: rolls ? 0.2 : 0.75 }}
-          className="relative -mt-[9%] sm:absolute sm:-right-4 sm:bottom-[4%] sm:mt-0 sm:w-[270px]"
+          transition={{ type: "spring", stiffness: 380, damping: 32, delay: rolls ? 0.2 : 0.25 }}
+          className="relative -mt-[9%] lg:absolute lg:-right-4 lg:bottom-[2%] lg:mt-0 lg:w-[250px]"
         >
           <div className="chamfer edge" style={{ background: "color-mix(in srgb, var(--r) 45%, transparent)" }}>
             <div className="chamfer bg-deep/95 p-4 backdrop-blur-xl">
