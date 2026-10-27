@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
-import { read } from "@/lib/db";
+import { countOrdersToHandle } from "@/lib/db";
 import { AdminNav } from "@/components/admin/nav";
 
 export const metadata: Metadata = { title: { default: "Painel", template: "%s · Painel Up Games" } };
@@ -8,8 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await requireAdmin();
-  const db = await read();
-  const pending = db.orders.filter((o) => o.status === "pendente" || o.status === "pago").length;
+  const pending = await countOrdersToHandle();
 
   return (
     <div className="min-h-dvh bg-void lg:grid lg:grid-cols-[248px_1fr]">

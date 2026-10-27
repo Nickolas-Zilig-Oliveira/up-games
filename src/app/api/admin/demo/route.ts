@@ -1,15 +1,12 @@
-import { mutate } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { apiUser } from "@/lib/auth";
-import { fail, ok } from "@/lib/api";
+import { dbFail, fail, ok } from "@/lib/api";
 
-/** Remove pedidos e clientes de demonstração criados pelo seed. */
+/** Remove os pedidos de exemplo. Produtos, estoque e clientes reais não são tocados. */
 export async function DELETE() {
   if (!(await apiUser("admin"))) return fail("Acesso restrito ao admin.", 403);
-  const removed = await mutate((db) => {
-    const before = db.orders.length;
-    db.orders = db.orders.filter((o) => !o.demo);
-    db.users = db.users.filter((u) => !u.id.startsWith("usr-demo-"));
-    return before - db.orders.length;
-  });
-  return ok({ removed });
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_clear_demo");
+  if (error) return dbFail(error);
+  return ok({ removed: data });
 }

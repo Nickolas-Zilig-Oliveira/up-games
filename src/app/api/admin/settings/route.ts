@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { mutate } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
+import { getSettings } from "@/lib/db";
 import { apiUser } from "@/lib/auth";
-import { fail, ok, parse } from "@/lib/api";
+import { dbFail, fail, ok, parse } from "@/lib/api";
 
 const schema = z
   .object({
@@ -31,8 +32,9 @@ export async function PATCH(req: Request) {
   if (!(await apiUser("admin"))) return fail("Acesso restrito ao admin.", 403);
   const body = await parse(req, schema, { partial: true });
   if ("error" in body) return body.error;
-  await mutate((db) => {
-    Object.assign(db.settings, body.data);
-  });
+  const current = await getSettings();
+  const supabase = await createClient();
+  const { error } = await supabase.from("settings").upsert({ id: 1, data: { ...current, ...body.data } });
+  if (error) return dbFail(error);
   return ok();
 }

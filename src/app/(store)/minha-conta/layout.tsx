@@ -8,7 +8,7 @@ const XP_PER_LEVEL = 250;
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
-  const db = await read();
+  const db = await read(["orders"]);
   const spent = db.orders
     .filter((o) => o.userId === user.id && o.status !== "cancelado")
     .reduce((s, o) => s + o.total, 0);

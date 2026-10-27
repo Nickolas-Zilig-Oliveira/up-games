@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { mutate, uid } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { apiUser } from "@/lib/auth";
-import { fail, ok, parse } from "@/lib/api";
+import { dbFail, fail, ok, parse } from "@/lib/api";
+import { mapAddress } from "@/lib/db";
 
 const schema = z.object({
   label: z.string().trim().min(1, "Dê um nome ao endereço (ex.: Casa)."),
@@ -19,20 +20,23 @@ export async function POST(req: Request) {
   if (!me) return fail("Entre na sua conta para continuar.", 401);
   const body = await parse(req, schema);
   if ("error" in body) return body.error;
-  const address = { id: `adr-${uid()}`, ...body.data, state: body.data.state.toUpperCase() };
-  await mutate((db) => {
-    db.users.find((u) => u.id === me.id)!.addresses.push(address);
-  });
-  return ok({ address });
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("addresses")
+    .insert({ ...body.data, complement: body.data.complement || null, state: body.data.state.toUpperCase(), user_id: me.id })
+    .select()
+    .single();
+  if (error) return dbFail(error);
+  return ok({ address: mapAddress(data) });
 }
 
 export async function DELETE(req: Request) {
   const me = await apiUser();
   if (!me) return fail("Entre na sua conta para continuar.", 401);
   const id = new URL(req.url).searchParams.get("id");
-  await mutate((db) => {
-    const u = db.users.find((x) => x.id === me.id)!;
-    u.addresses = u.addresses.filter((a) => a.id !== id);
-  });
+  if (!id) return fail("Endereço não informado.");
+  const supabase = await createClient();
+  const { error } = await supabase.from("addresses").delete().eq("id", id).eq("user_id", me.id);
+  if (error) return dbFail(error);
   return ok();
 }

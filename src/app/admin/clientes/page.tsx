@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type { Metadata } from "next";
+import { Download } from "lucide-react";
 import { read } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { dateBR, money } from "@/lib/format";
@@ -11,7 +13,7 @@ export const metadata: Metadata = { title: "Clientes" };
 export default async function Clientes({ searchParams }: PageProps<"/admin/clientes">) {
   const { q } = (await searchParams) as { q?: string };
   const me = await requireAdmin();
-  const db = await read();
+  const db = await read(["orders", "users"]);
   let users = db.users.map((u) => {
     const orders = db.orders.filter((o) => o.userId === u.id && o.status !== "cancelado");
     return {
@@ -26,7 +28,9 @@ export default async function Clientes({ searchParams }: PageProps<"/admin/clien
 
   return (
     <>
-      <PageHeader title="Clientes" text={`${db.users.filter((u) => u.role === "customer").length} clientes cadastrados, ordenados por quanto já compraram.`} />
+      <PageHeader title="Clientes" text={`${db.users.filter((u) => u.role === "customer").length} clientes cadastrados, ordenados por quanto já compraram.`}>
+        <a href="/api/admin/export/clientes" className="btn btn-ghost btn-sm"><Download className="size-4" /> Exportar planilha</a>
+      </PageHeader>
       <AdminSearch placeholder="Buscar por nome, e-mail ou telefone" />
       <>
         <ul className="space-y-2 md:hidden">
@@ -34,7 +38,7 @@ export default async function Clientes({ searchParams }: PageProps<"/admin/clien
             <li key={u.id} className="chamfer-sm bg-deep p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="truncate font-semibold">{u.name}</p>
+                  <Link href={`/admin/clientes/${u.id}`} className="block truncate font-semibold hover:text-ember">{u.name}</Link>
                   <p className="truncate text-sm text-dim">{u.email}</p>
                   {u.phone && <p className="text-sm text-fog">{u.phone}</p>}
                 </div>
@@ -63,7 +67,7 @@ export default async function Clientes({ searchParams }: PageProps<"/admin/clien
           {users.map((u) => (
             <tr key={u.id}>
               <td>
-                <span className="font-semibold">{u.name}</span>
+                <Link href={`/admin/clientes/${u.id}`} className="font-semibold hover:text-ember">{u.name}</Link>
                 <span className="block text-xs text-dim">{u.email} · desde {dateBR(u.createdAt)}</span>
               </td>
               <td className="text-fog">{u.phone || "—"}</td>

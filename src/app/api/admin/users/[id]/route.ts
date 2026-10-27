@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { mutate } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { apiUser } from "@/lib/auth";
-import { fail, ok, parse } from "@/lib/api";
+import { dbFail, fail, ok, parse } from "@/lib/api";
 
 export async function PATCH(req: Request, ctx: RouteContext<"/api/admin/users/[id]">) {
   const admin = await apiUser("admin");
@@ -10,9 +10,8 @@ export async function PATCH(req: Request, ctx: RouteContext<"/api/admin/users/[i
   if (id === admin.id) return fail("Você não pode alterar o próprio acesso.");
   const body = await parse(req, z.object({ role: z.enum(["admin", "customer"]) }));
   if ("error" in body) return body.error;
-  await mutate((db) => {
-    const u = db.users.find((x) => x.id === id);
-    if (u) u.role = body.data.role;
-  });
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").update({ role: body.data.role }).eq("id", id);
+  if (error) return dbFail(error);
   return ok();
 }

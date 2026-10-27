@@ -1,26 +1,22 @@
 import { z } from "zod";
-import { mutate } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { apiUser } from "@/lib/auth";
-import { moveStock } from "@/lib/orders";
-import { fail, ok, parse } from "@/lib/api";
+import { dbFail, fail, ok, parse } from "@/lib/api";
 
 const schema = z.object({
-  productId: z.string(),
+  productId: z.string().uuid(),
   type: z.enum(["entrada", "saida", "ajuste"]),
   qty: z.number().int().nonnegative("Quantidade inválida."),
   note: z.string().trim().max(200).optional(),
 });
 
 export async function POST(req: Request) {
-  const admin = await apiUser("admin");
-  if (!admin) return fail("Acesso restrito ao admin.", 403);
+  if (!(await apiUser("admin"))) return fail("Acesso restrito ao admin.", 403);
   const body = await parse(req, schema);
   if ("error" in body) return body.error;
   const { productId, type, qty, note } = body.data;
-  if (type !== "ajuste" && qty === 0) return fail("Informe uma quantidade maior que zero.");
-  const stock = await mutate((db) => {
-    moveStock(db, productId, type, qty, note, admin.name);
-    return db.products.find((p) => p.id === productId)?.stock;
-  });
-  return stock === undefined ? fail("Produto não encontrado.", 404) : ok({ stock });
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("admin_adjust_stock", { p_product: productId, p_type: type, p_qty: qty, p_note: note ?? "" });
+  if (error) return dbFail(error);
+  return ok({ stock: data });
 }

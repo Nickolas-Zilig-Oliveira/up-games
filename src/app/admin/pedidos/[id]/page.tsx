@@ -10,7 +10,7 @@ import { WhatsIcon } from "@/components/icons";
 
 export default async function AdminOrder({ params }: PageProps<"/admin/pedidos/[id]">) {
   const { id } = await params;
-  const db = await read();
+  const db = await read(["orders"]);
   const o = db.orders.find((x) => x.id === id);
   if (!o) notFound();
   const phone = o.customer.phone?.replace(/\D/g, "");

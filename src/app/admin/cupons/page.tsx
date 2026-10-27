@@ -6,7 +6,7 @@ import { CouponManager } from "@/components/admin/coupon-manager";
 export const metadata: Metadata = { title: "Cupons" };
 
 export default async function Cupons() {
-  const db = await read();
+  const db = await read(["coupons"]);
   return (
     <>
       <PageHeader title="Cupons" text="Códigos de desconto que o cliente digita no checkout. Divulgue no Instagram ou no aviso do topo da loja." />

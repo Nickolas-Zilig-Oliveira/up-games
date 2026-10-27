@@ -27,7 +27,7 @@ function Delta({ v }: { v: number }) {
 export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
   const { dias } = (await searchParams) as { dias?: string };
   const days = [7, 30, 90].includes(Number(dias)) ? Number(dias) : 30;
-  const db = await read();
+  const db = await read(["orders"]);
   const d = dashboard(db, days);
   const hasDemo = db.orders.some((o) => o.demo);
   const waiting = db.orders.filter((o) => o.status === "pendente" || o.status === "pago").length;

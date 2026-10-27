@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Plus, Star } from "lucide-react";
+import { Download, Plus, Star } from "lucide-react";
 import { read } from "@/lib/db";
 import { money } from "@/lib/format";
 import { PageHeader, Table, Empty } from "@/components/admin/ui";
@@ -23,6 +23,7 @@ export default async function AdminProducts({ searchParams }: PageProps<"/admin/
   return (
     <>
       <PageHeader title="Produtos e estoque" text="Tudo o que a loja vende. Ajuste o estoque aqui mesmo com − e +; clique em Editar para mudar preço, fotos e descrição.">
+        <a href="/api/admin/export/produtos" className="btn btn-ghost btn-sm"><Download className="size-4" /> Exportar planilha</a>
         <Link href="/admin/produtos/novo" className="btn btn-ember">
           <Plus className="size-4" /> Novo produto
         </Link>

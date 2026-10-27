@@ -1,61 +1,202 @@
 import "server-only";
-import { promises as fs } from "node:fs";
-import path from "node:path";
-import { randomUUID } from "node:crypto";
-import type { Database } from "./types";
-import { buildSeed } from "./seed";
+import { createClient } from "./supabase/server";
+import type {
+  Address,
+  Banner,
+  Category,
+  Coupon,
+  Database,
+  Order,
+  OrderItem,
+  Product,
+  PublicUser,
+  Settings,
+  StockMovement,
+} from "./types";
 
 /*
- * Banco local em JSON. Toda leitura/escrita passa por aqui, então trocar
- * por Supabase depois é questão de reimplementar `read`/`mutate`.
+ * Leitura dos dados no Supabase. Cada pessoa só recebe o que as regras de segurança
+ * (RLS) do banco deixam: visitante vê o catálogo; cliente vê os próprios pedidos;
+ * admin vê tudo. As escritas ficam nas rotas /api e nas funções SQL do banco.
  */
 
-// Na Vercel só /tmp aceita escrita — e é temporário: os dados voltam ao seed
-// quando a função reinicia. Para persistir de verdade, migrar para Supabase.
-export const DATA_DIR =
-  process.env.DATA_DIR || (process.env.VERCEL ? "/tmp/up-games" : path.join(process.cwd(), "data"));
-const DB_FILE = path.join(DATA_DIR, "db.json");
-export const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type Row = Record<string, any>;
+const num = (v: unknown) => (v === null || v === undefined ? undefined : Number(v));
 
-type Store = { loading: Promise<Database> | null; queue: Promise<unknown> };
-const g = globalThis as unknown as { __upStore?: Store };
-const store: Store = (g.__upStore ??= { loading: null, queue: Promise.resolve() });
+export const mapCategory = (r: Row): Category => ({ id: r.id, name: r.name, slug: r.slug, icon: r.icon });
 
-function load(): Promise<Database> {
-  // Uma única carga compartilhada, mesmo com várias requisições simultâneas.
-  store.loading ??= (async () => {
-    try {
-      return JSON.parse(await fs.readFile(DB_FILE, "utf8")) as Database;
-    } catch {
-      const db = buildSeed();
-      await persist(db);
-      return db;
-    }
-  })();
-  return store.loading;
+export const mapProduct = (r: Row): Product => ({
+  id: r.id,
+  slug: r.slug,
+  sku: r.sku,
+  name: r.name,
+  description: r.description,
+  price: Number(r.price),
+  comparePrice: num(r.compare_price),
+  cost: num(r.cost),
+  categoryId: r.category_id,
+  platform: r.platform,
+  condition: r.condition,
+  rarity: r.rarity,
+  stock: r.stock,
+  minStock: r.min_stock,
+  images: r.images ?? [],
+  featured: r.featured,
+  active: r.active,
+  createdAt: r.created_at,
+});
+
+const mapItem = (r: Row): OrderItem => ({
+  productId: r.product_id ?? "",
+  name: r.name,
+  price: Number(r.price),
+  qty: r.qty,
+  image: r.image ?? undefined,
+  platform: r.platform ?? "",
+});
+
+export const mapOrder = (r: Row): Order => ({
+  id: r.id,
+  number: Number(r.number),
+  userId: r.user_id ?? "",
+  customer: r.customer,
+  items: (r.order_items ?? []).map(mapItem),
+  subtotal: Number(r.subtotal),
+  discount: Number(r.discount),
+  shipping: Number(r.shipping),
+  total: Number(r.total),
+  coupon: r.coupon ?? undefined,
+  status: r.status,
+  payment: r.payment,
+  delivery: r.delivery,
+  address: r.address ?? undefined,
+  notes: r.notes ?? undefined,
+  history: r.history ?? [],
+  createdAt: r.created_at,
+  demo: r.demo,
+});
+
+export const mapAddress = (r: Row): Address => ({
+  id: r.id,
+  label: r.label,
+  street: r.street,
+  number: r.number,
+  complement: r.complement ?? undefined,
+  district: r.district,
+  city: r.city,
+  state: r.state,
+  zip: r.zip,
+});
+
+export const mapProfile = (r: Row): PublicUser => ({
+  id: r.id,
+  name: r.name,
+  email: r.email,
+  role: r.role,
+  phone: r.phone ?? undefined,
+  addresses: (r.addresses ?? []).map(mapAddress),
+  favorites: (r.favorites ?? []).map((f: Row) => f.product_id),
+  createdAt: r.created_at,
+});
+
+export const mapMovement = (r: Row): StockMovement => ({
+  id: r.id,
+  productId: r.product_id,
+  type: r.type,
+  qty: r.qty,
+  balance: r.balance,
+  note: r.note ?? undefined,
+  by: r.by_name ?? undefined,
+  createdAt: r.created_at,
+});
+
+export const mapCoupon = (r: Row): Coupon => ({
+  id: r.id,
+  code: r.code,
+  kind: r.kind,
+  value: Number(r.value),
+  minTotal: Number(r.min_total),
+  maxUses: r.max_uses ?? undefined,
+  uses: r.uses,
+  active: r.active,
+});
+
+export const mapBanner = (r: Row): Banner => ({
+  id: r.id,
+  title: r.title,
+  subtitle: r.subtitle,
+  buttonLabel: r.button_label,
+  link: r.link,
+  image: r.image ?? undefined,
+  position: r.position,
+  active: r.active,
+});
+
+export const defaultSettings: Settings = {
+  storeName: "Up Games",
+  heroTitle: "",
+  heroSubtitle: "",
+  announcement: "",
+  announcementActive: false,
+  whatsapp: "",
+  phone: "",
+  email: "",
+  address: "",
+  mapsUrl: "",
+  instagram: "",
+  tiktok: "",
+  hours: [],
+  deliveryFee: 15,
+  freeShippingOver: 299,
+  dropIds: [],
+  tradeInTitle: "",
+  tradeInText: "",
+  platforms: [],
+};
+
+/** Só as configurações da loja (leve). */
+export async function getSettings(): Promise<Settings> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("settings").select("data").eq("id", 1).maybeSingle();
+  return { ...defaultSettings, ...(data?.data ?? {}) };
 }
 
-async function persist(db: Database) {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  const tmp = `${DB_FILE}.${process.pid}.${uid()}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(db, null, 2));
-  await fs.rename(tmp, DB_FILE);
+/** Quantos pedidos esperam atendimento (pendente ou pago). */
+export async function countOrdersToHandle(): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase.from("orders").select("id", { count: "exact", head: true }).in("status", ["pendente", "pago"]);
+  return count ?? 0;
 }
 
-export async function read(): Promise<Database> {
-  return load();
-}
+export type Scope = "orders" | "movements" | "coupons" | "users";
 
-/** Executa uma alteração em fila, garantindo que escritas não se atropelem. */
-export function mutate<T>(fn: (db: Database) => T | Promise<T>): Promise<T> {
-  const run = store.queue.then(async () => {
-    const db = await load();
-    const result = await fn(db);
-    await persist(db);
-    return result;
-  });
-  store.queue = run.catch(() => undefined);
-  return run;
+/** Catálogo, categorias, configurações e banners — mais o que for pedido em `scope`. */
+export async function read(scope: Scope[] = []): Promise<Database> {
+  const supabase = await createClient();
+  const want = new Set(scope);
+  const [cats, prods, settings, banners, orders, movements, coupons, users] = await Promise.all([
+    supabase.from("categories").select("*").order("position").order("name"),
+    supabase.from("products").select("*").order("created_at", { ascending: true }).order("name").limit(1000),
+    supabase.from("settings").select("data").eq("id", 1).maybeSingle(),
+    supabase.from("banners").select("*").order("position").order("created_at"),
+    want.has("orders")
+      ? supabase.from("orders").select("*, order_items(*)").order("created_at", { ascending: false }).limit(1000)
+      : null,
+    want.has("movements")
+      ? supabase.from("stock_movements").select("*").order("created_at", { ascending: false }).limit(1000)
+      : null,
+    want.has("coupons") ? supabase.from("coupons").select("*").order("created_at") : null,
+    want.has("users") ? supabase.from("profiles").select("*, addresses(*), favorites(product_id)").order("created_at") : null,
+  ]);
+  return {
+    categories: (cats.data ?? []).map(mapCategory),
+    products: (prods.data ?? []).map(mapProduct),
+    settings: { ...defaultSettings, ...(settings.data?.data ?? {}) },
+    banners: (banners.data ?? []).map(mapBanner),
+    orders: (orders?.data ?? []).map(mapOrder),
+    movements: (movements?.data ?? []).map(mapMovement),
+    coupons: (coupons?.data ?? []).map(mapCoupon),
+    users: (users?.data ?? []).map(mapProfile),
+  };
 }
-
-export const uid = () => randomUUID().replace(/-/g, "").slice(0, 12);

@@ -10,7 +10,7 @@ const typeLabel = { entrada: "Entrada", saida: "Saída", ajuste: "Ajuste", venda
 
 export default async function EditProduct({ params }: PageProps<"/admin/produtos/[id]">) {
   const { id } = await params;
-  const db = await read();
+  const db = await read(["orders", "movements"]);
   const p = db.products.find((x) => x.id === id);
   if (!p) notFound();
   const moves = db.movements.filter((m) => m.productId === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 12);

@@ -1,8 +1,7 @@
 import { z } from "zod";
-import { mutate } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { apiUser } from "@/lib/auth";
-import { hashPassword, verifyPassword } from "@/lib/password";
-import { fail, ok, parse } from "@/lib/api";
+import { dbFail, fail, ok, parse } from "@/lib/api";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Digite seu nome.").optional(),
@@ -17,15 +16,20 @@ export async function PATCH(req: Request) {
   const body = await parse(req, schema);
   if ("error" in body) return body.error;
   const { name, phone, currentPassword, newPassword } = body.data;
-  const result = await mutate((db) => {
-    const u = db.users.find((x) => x.id === me.id)!;
-    if (newPassword) {
-      if (!currentPassword || !verifyPassword(currentPassword, u.passwordHash)) return "Senha atual incorreta.";
-      u.passwordHash = hashPassword(newPassword);
-    }
-    if (name) u.name = name;
-    if (phone !== undefined) u.phone = phone;
-    return null;
-  });
-  return result ? fail(result) : ok();
+  const supabase = await createClient();
+
+  if (newPassword) {
+    const check = currentPassword ? await supabase.auth.signInWithPassword({ email: me.email, password: currentPassword }) : null;
+    if (!check || check.error) return fail("Senha atual incorreta.");
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return fail("Não foi possível trocar a senha. Tente uma senha diferente.");
+  }
+  const patch: Record<string, string | null> = {};
+  if (name) patch.name = name;
+  if (phone !== undefined) patch.phone = phone || null;
+  if (Object.keys(patch).length) {
+    const { error } = await supabase.from("profiles").update(patch).eq("id", me.id);
+    if (error) return dbFail(error);
+  }
+  return ok();
 }

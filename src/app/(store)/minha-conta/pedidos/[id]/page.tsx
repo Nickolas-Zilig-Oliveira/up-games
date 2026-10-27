@@ -15,7 +15,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/mi
   const { id } = await params;
   const { novo } = (await searchParams) as { novo?: string };
   const user = await requireUser(`/minha-conta/pedidos/${id}`);
-  const db = await read();
+  const db = await read(["orders"]);
   const o = db.orders.find((x) => x.id === id && (x.userId === user.id || user.role === "admin"));
   if (!o) notFound();
   const s = db.settings;

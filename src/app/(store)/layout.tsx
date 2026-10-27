@@ -1,5 +1,5 @@
 import { currentUser } from "@/lib/auth";
-import { read } from "@/lib/db";
+import { getSettings } from "@/lib/db";
 import { Header } from "@/components/store/header";
 import { Footer } from "@/components/store/footer";
 import { CartDrawer } from "@/components/store/cart-drawer";
@@ -8,8 +8,7 @@ import { WhatsIcon } from "@/components/icons";
 export const dynamic = "force-dynamic";
 
 export default async function StoreLayout({ children }: { children: React.ReactNode }) {
-  const [user, db] = await Promise.all([currentUser(), read()]);
-  const s = db.settings;
+  const [user, s] = await Promise.all([currentUser(), getSettings()]);
   return (
     <div className="bg-field min-h-dvh">
       <Header user={user} announcement={s.announcementActive ? s.announcement : undefined} whatsapp={s.whatsapp} />

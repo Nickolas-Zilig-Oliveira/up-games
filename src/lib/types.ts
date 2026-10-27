@@ -16,19 +16,16 @@ export interface Address {
   zip: string;
 }
 
-export interface User {
+export interface PublicUser {
   id: string;
   name: string;
   email: string;
-  passwordHash: string;
   role: Role;
   phone?: string;
   addresses: Address[];
   favorites: string[];
   createdAt: string;
 }
-
-export type PublicUser = Omit<User, "passwordHash">;
 
 export interface Category {
   id: string;
@@ -145,13 +142,24 @@ export interface Settings {
   platforms: string[];
 }
 
+export interface Banner {
+  id: string;
+  title: string;
+  subtitle: string;
+  buttonLabel: string;
+  link: string;
+  image?: string;
+  position: number;
+  active: boolean;
+}
+
 export interface Database {
-  users: User[];
+  users: PublicUser[];
   categories: Category[];
   products: Product[];
   orders: Order[];
   movements: StockMovement[];
   coupons: Coupon[];
   settings: Settings;
-  counters: { order: number };
+  banners: Banner[];
 }

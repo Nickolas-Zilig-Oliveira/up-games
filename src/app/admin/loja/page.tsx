@@ -6,7 +6,7 @@ import { SettingsForm } from "@/components/admin/settings-form";
 export const metadata: Metadata = { title: "Textos do site" };
 
 export default async function LojaSettings() {
-  const db = await read();
+  const db = await read(["orders"]);
   return (
     <>
       <PageHeader title="Textos do site" text="Os textos, contatos e horários que os clientes veem. Abra um bloco, edite e clique em Salvar alterações." />

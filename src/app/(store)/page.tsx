@@ -5,9 +5,11 @@ import { ProductCard } from "@/components/product-card";
 import { LootDrop } from "@/components/store/loot-drop";
 import { DragRow } from "@/components/store/drag-row";
 import { WhatsIcon } from "@/components/icons";
+import { BannerCarousel } from "@/components/store/banner-carousel";
 
 export default async function Home() {
-  const { products, settings: s } = await catalog();
+  const { products, settings: s, db } = await catalog();
+  const banners = db.banners.filter((b) => b.active);
   const byId = new Map(products.map((p) => [p.id, p]));
   const drop = s.dropIds
     .map((id) => byId.get(id))
@@ -21,6 +23,12 @@ export default async function Home() {
 
   return (
     <>
+      {banners.length > 0 && (
+        <section className="mx-auto max-w-[1320px] px-4 pt-4 sm:px-6" aria-label="Destaques">
+          <BannerCarousel banners={banners} />
+        </section>
+      )}
+
       {/* HERO */}
       <section className="relative mx-auto grid max-w-[1320px] items-center gap-6 px-4 pb-12 pt-5 sm:gap-10 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:pb-24 lg:pt-14">
         <div className="relative z-10">

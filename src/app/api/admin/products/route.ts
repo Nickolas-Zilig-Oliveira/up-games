@@ -1,31 +1,43 @@
-import { mutate, uid } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { apiUser } from "@/lib/auth";
-import { moveStock } from "@/lib/orders";
 import { slugify } from "@/lib/format";
-import { fail, ok, parse } from "@/lib/api";
+import { dbFail, fail, ok, parse } from "@/lib/api";
+import { mapProduct } from "@/lib/db";
 import { productSchema } from "./schema";
-import type { Product } from "@/lib/types";
 
 export async function POST(req: Request) {
-  const admin = await apiUser("admin");
-  if (!admin) return fail("Acesso restrito ao admin.", 403);
+  if (!(await apiUser("admin"))) return fail("Acesso restrito ao admin.", 403);
   const body = await parse(req, productSchema);
   if ("error" in body) return body.error;
-  const { stock, ...data } = body.data;
-  const product = await mutate((db) => {
-    let slug = slugify(`${data.name} ${data.platform}`);
-    if (db.products.some((p) => p.slug === slug)) slug = `${slug}-${uid().slice(0, 4)}`;
-    const p: Product = {
-      id: `prd-${uid()}`,
-      slug,
-      ...data,
-      sku: data.sku || `UP-${1000 + db.products.length}`,
-      stock: 0,
-      createdAt: new Date().toISOString(),
-    };
-    db.products.push(p);
-    if (stock > 0) moveStock(db, p.id, "entrada", stock, "Cadastro do produto", admin.name);
-    return p;
-  });
-  return ok({ product });
+  const { stock, comparePrice, cost, categoryId, minStock, ...d } = body.data;
+  const supabase = await createClient();
+
+  const base = slugify(`${d.name} ${d.platform}`);
+  let product = null;
+  for (let attempt = 0; attempt < 4 && !product; attempt++) {
+    const slug = attempt === 0 ? base : `${base}-${crypto.randomUUID().slice(0, 4)}`;
+    const { data, error } = await supabase
+      .from("products")
+      .insert({
+        ...d,
+        slug,
+        sku: d.sku || `UP-${Date.now().toString(36).slice(-5).toUpperCase()}`,
+        compare_price: comparePrice || null,
+        cost: cost || null,
+        category_id: categoryId,
+        min_stock: minStock,
+        stock: 0,
+      })
+      .select()
+      .single();
+    if (!error) product = data;
+    else if (error.code !== "23505") return dbFail(error);
+  }
+  if (!product) return fail("Não foi possível criar o produto. Tente outro nome.", 409);
+
+  if (stock > 0) {
+    const { error } = await supabase.rpc("admin_adjust_stock", { p_product: product.id, p_type: "entrada", p_qty: stock, p_note: "Cadastro do produto" });
+    if (error) return dbFail(error);
+  }
+  return ok({ product: mapProduct({ ...product, stock }) });
 }

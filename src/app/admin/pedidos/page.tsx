@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Download } from "lucide-react";
 import { read } from "@/lib/db";
 import { dateTimeBR, money, statusLabel } from "@/lib/format";
 import { PageHeader, Table, Empty } from "@/components/admin/ui";
@@ -11,7 +12,7 @@ export const metadata: Metadata = { title: "Pedidos" };
 
 export default async function AdminOrders({ searchParams }: PageProps<"/admin/pedidos">) {
   const { q, status } = (await searchParams) as { q?: string; status?: OrderStatus };
-  const db = await read();
+  const db = await read(["orders"]);
   let list = [...db.orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   if (status) list = list.filter((o) => o.status === status);
   if (q) {
@@ -22,7 +23,9 @@ export default async function AdminOrders({ searchParams }: PageProps<"/admin/pe
 
   return (
     <>
-      <PageHeader title="Pedidos" text="Acompanhe e atualize cada pedido. O cliente vê a mudança na hora, na área Minha conta." />
+      <PageHeader title="Pedidos" text="Acompanhe e atualize cada pedido. O cliente vê a mudança na hora, na área Minha conta.">
+        <a href="/api/admin/export/pedidos" className="btn btn-ghost btn-sm"><Download className="size-4" /> Exportar planilha</a>
+      </PageHeader>
       <div className="scrollbar-none mb-4 flex gap-2 overflow-x-auto">
         <Link href="/admin/pedidos" className={`chamfer-sm whitespace-nowrap px-3 py-2 text-sm font-semibold ${!status ? "bg-ember text-void" : "bg-deep text-fog hover:text-chalk"}`}>
           Todos <span className="tabular ml-1 opacity-70">{db.orders.length}</span>

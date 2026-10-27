@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Meus pedidos" };
 
 export default async function Orders() {
   const user = await requireUser("/minha-conta/pedidos");
-  const orders = (await read()).orders
+  const orders = (await read(["orders"])).orders
     .filter((o) => o.userId === user.id)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 

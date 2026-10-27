@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   ExternalLink,
+  GalleryHorizontal,
   LayoutDashboard,
   Menu,
   Package,
@@ -31,6 +32,7 @@ const groups = [
   {
     title: "Configurar a loja",
     items: [
+      { href: "/admin/banners", label: "Banners", icon: GalleryHorizontal },
       { href: "/admin/categorias", label: "Categorias", icon: Tags },
       { href: "/admin/cupons", label: "Cupons", icon: Ticket },
       { href: "/admin/clientes", label: "Clientes", icon: Users },
