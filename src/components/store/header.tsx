@@ -8,6 +8,7 @@ import { ChevronRight, Disc3, Gamepad2, LayoutDashboard, MapPin, Menu, Monitor, 
 import type { PublicUser } from "@/lib/types";
 import { useCart } from "../providers";
 import { WhatsIcon } from "../icons";
+import { ThemeToggle } from "../theme-toggle";
 
 const nav = [
   { href: "/loja", label: "Loja", icon: ShoppingBag, text: "Tudo o que está na prateleira" },
@@ -78,6 +79,9 @@ export function Header({ user, announcement, whatsapp }: { user: PublicUser | nu
             >
               <Search className="size-5" />
             </button>
+            <div className="hidden sm:block">
+              <ThemeToggle />
+            </div>
             {user?.role === "admin" && (
               <Link
                 href="/admin"
@@ -224,6 +228,10 @@ export function Header({ user, announcement, whatsapp }: { user: PublicUser | nu
                   </motion.div>
                 ))}
               </nav>
+
+              <div className="px-5 pb-3 sm:hidden">
+                <ThemeToggle variant="row" />
+              </div>
 
               {whatsapp && (
                 <div className="border-t border-line p-5">

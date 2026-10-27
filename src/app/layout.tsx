@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { Big_Shoulders, Hanken_Grotesk } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
@@ -12,18 +13,26 @@ export const metadata: Metadata = {
     "Jogos de PS5, PS4, PS3, Xbox, consoles, controles, headsets e colecionáveis. Compra, venda e troca no Jardim Ranieri, São Paulo.",
 };
 
-// Loja usada no celular: sem zoom por pinça ou toque duplo, a tela fica no lugar.
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: "#1b1435",
-};
+async function currentTheme() {
+  // Padrão é o modo claro; quem escolher o escuro fica salvo em cookie.
+  return (await cookies()).get("up_theme")?.value === "dark" ? "dark" : "light";
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// Loja usada no celular: sem zoom por pinça ou toque duplo, a tela fica no lugar.
+export async function generateViewport(): Promise<Viewport> {
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: (await currentTheme()) === "dark" ? "#1b1435" : "#ffffff",
+  };
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const theme = await currentTheme();
   return (
-    <html lang="pt-BR" className={`${display.variable} ${sans.variable}`}>
+    <html lang="pt-BR" data-theme={theme} className={`${display.variable} ${sans.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

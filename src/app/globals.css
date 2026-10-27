@@ -39,6 +39,30 @@
   --cut: 14px;
 }
 
+/* Modo claro: mesmas variáveis, outros valores */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-void: #ffffff;
+  --color-deep: #f4f1fc;
+  --color-plate: #e9e4f7;
+  --color-plate-2: #ddd5f2;
+  --color-line: rgb(60 40 120 / 0.16);
+  --color-line-strong: rgb(60 40 120 / 0.34);
+  --color-ember: #e24f00;
+  --color-ember-2: #f26a1b;
+  --color-gold: #a86500;
+  --color-violet: #6d34d6;
+  --color-chalk: #1a1333;
+  --color-fog: #4a4070;
+  --color-dim: #6b6296;
+  --color-ok: #0c8a57;
+  --color-bad: #d02149;
+  --color-r-comum: #5f6879;
+  --color-r-raro: #1b74cc;
+  --color-r-epico: #8434d8;
+  --color-r-lendario: #cc6d00;
+}
+
 html {
   background: var(--color-void);
   scroll-behavior: smooth;
@@ -88,6 +112,16 @@ body {
     radial-gradient(1200px 600px at 80% -10%, rgb(142 77 255 / 0.18), transparent 60%),
     radial-gradient(900px 500px at -10% 30%, rgb(255 107 26 / 0.08), transparent 60%);
   background-size: 22px 22px, auto, auto;
+}
+
+:root[data-theme="light"] .bg-field {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(60 40 120 / 0.09) 1px, transparent 0),
+    radial-gradient(1200px 600px at 80% -10%, rgb(142 77 255 / 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgb(255 107 26 / 0.07), transparent 60%);
+}
+:root[data-theme="light"] .slot-shine {
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.55) 48%, transparent 66%);
 }
 
 ::selection {
