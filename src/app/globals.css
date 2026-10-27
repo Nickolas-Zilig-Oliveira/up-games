@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #0d0919;
+  --color-deep: #160f2a;
+  --color-plate: #211640;
+  --color-plate-2: #2b1d52;
+  --color-line: rgb(190 160 255 / 0.14);
+  --color-line-strong: rgb(190 160 255 / 0.28);
+  --color-ember: #ff6b1a;
+  --color-ember-2: #ff8f3f;
+  --color-gold: #ffc93c;
+  --color-violet: #8e4dff;
+  --color-chalk: #f4efff;
+  --color-fog: #a99dc8;
+  --color-dim: #6f6496;
+  --color-ok: #3ddc97;
+  --color-bad: #ff4d6d;
+
+  --color-r-comum: #9aa3b5;
+  --color-r-raro: #3fa9ff;
+  --color-r-epico: #b264ff;
+  --color-r-lendario: #ff9a1f;
+
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.1, 1);
+}
+
+:root {
+  color-scheme: dark;
+  --cut: 14px;
+}
+
+html {
+  background: var(--color-void);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-chalk);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+/* Grade de pontos + vinheta violeta: o "chão" do inventário */
+.bg-field {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(190 160 255 / 0.09) 1px, transparent 0),
+    radial-gradient(1200px 600px at 80% -10%, rgb(142 77 255 / 0.18), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgb(255 107 26 / 0.08), transparent 60%);
+  background-size: 22px 22px, auto, auto;
+}
+
+::selection {
+  background: var(--color-ember);
+  color: var(--color-void);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+@layer components {
+/* Cantos chanfrados — o recorte da estrela da logo vira linguagem de forma */
+.chamfer {
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+.chamfer-sm {
+  --cut: 8px;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+.chamfer-r {
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
+}
+
+/* Borda de 1px que acompanha o chanfro (wrapper com padding 1px) */
+.edge {
+  padding: 1px;
+  background: var(--color-line);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Botões */
+.btn {
+  --cut: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding: 0 1.4rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+  transition: transform 160ms var(--ease-snap), background-color 160ms, color 160ms, filter 160ms;
+  user-select: none;
+  white-space: nowrap;
+}
+.btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.btn-ember {
+  background: linear-gradient(180deg, var(--color-ember-2), var(--color-ember));
+  color: #1a0b02;
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18);
+}
+.btn-ember:hover {
+  filter: brightness(1.08);
+}
+.btn-ghost {
+  background: var(--color-plate);
+  color: var(--color-chalk);
+}
+.btn-ghost:hover {
+  background: var(--color-plate-2);
+}
+.btn-sm {
+  height: 2.25rem;
+  padding: 0 0.9rem;
+  font-size: 0.85rem;
+  --cut: 7px;
+}
+
+/* Campos */
+.field {
+  width: 100%;
+  height: 2.9rem;
+  padding: 0 0.95rem;
+  background: var(--color-deep);
+  border: 1px solid var(--color-line);
+  color: var(--color-chalk);
+  font-size: 0.95rem;
+  transition: border-color 150ms, background-color 150ms;
+}
+textarea.field {
+  height: auto;
+  padding: 0.75rem 0.95rem;
+  line-height: 1.5;
+}
+select.field {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-fog) 50%), linear-gradient(135deg, var(--color-fog) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 2.2rem;
+}
+.field:hover {
+  border-color: var(--color-line-strong);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--color-ember);
+  background: var(--color-plate);
+}
+.field::placeholder {
+  color: var(--color-dim);
+}
+.label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-fog);
+  margin-bottom: 0.4rem;
+}
+
+}
+
+/* Raridade */
+[data-rarity="comum"] { --r: var(--color-r-comum); }
+[data-rarity="raro"] { --r: var(--color-r-raro); }
+[data-rarity="epico"] { --r: var(--color-r-epico); }
+[data-rarity="lendario"] { --r: var(--color-r-lendario); }
+
+.rarity-text { color: var(--r); }
+
+/* Brilho que varre o slot ao passar o mouse */
+.slot-shine {
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.12) 48%, transparent 66%);
+  transform: translateX(-120%);
+  transition: transform 700ms var(--ease-snap);
+}
+.group:hover .slot-shine {
+  transform: translateX(120%);
+}
+
+/* Estrela girando atrás do drop */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+
+@keyframes beam {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.85; }
+}
+.beam {
+  animation: beam 3.2s ease-in-out infinite;
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
