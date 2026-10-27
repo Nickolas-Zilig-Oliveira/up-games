@@ -3,6 +3,7 @@ import { ArrowUpRight, MapPin, Phone, Star } from "lucide-react";
 import { catalog, filterProducts } from "@/lib/queries";
 import { ProductCard } from "@/components/product-card";
 import { LootDrop } from "@/components/store/loot-drop";
+import { DragRow } from "@/components/store/drag-row";
 import { CategoryIcon, WhatsIcon } from "@/components/icons";
 
 const reviews = [
@@ -18,7 +19,9 @@ export default async function Home() {
     .map((id) => byId.get(id))
     .filter((p) => !!p)
     .map((p) => ({ ...p, icon: p.category.icon }));
-  const featured = filterProducts(products.filter((p) => p.featured), {}).slice(0, 8);
+  const featured = filterProducts(products.filter((p) => p.featured), {}).slice(0, 10);
+  // Produtos cadastrados por último ficam no fim da lista: os mais novos vêm primeiro.
+  const latest = [...products].filter((p) => p.stock > 0).reverse().slice(0, 10);
   const platformCounts = s.platforms
     .map((pl) => ({ name: pl, count: products.filter((p) => p.platform === pl).length }))
     .filter((p) => p.count > 0);
@@ -78,25 +81,28 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* DESTAQUES */}
-      <section className="mx-auto mt-24 max-w-[1320px] px-4 sm:px-6" aria-labelledby="destaques">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 id="destaques" className="display text-5xl sm:text-6xl">Em destaque na prateleira</h2>
-            <p className="mt-3 max-w-[56ch] text-fog">
-              A cor de cada item mostra a raridade: do comum do dia a dia ao lendário que some rápido.
-            </p>
+      {/* FILEIRAS: deslizam para o lado */}
+      {[
+        { id: "lancamentos", title: "Lançamentos", text: "O que acabou de chegar na prateleira.", items: latest, href: "/loja?ordem=novidades" },
+        { id: "destaques", title: "Em destaque", text: "A cor de cada item mostra a raridade: do comum ao lendário que some rápido.", items: featured, href: "/loja" },
+      ].map((row) => (
+        <section key={row.id} className="mx-auto mt-24 max-w-[1320px] px-4 sm:px-6" aria-labelledby={row.id}>
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 id={row.id} className="display text-5xl sm:text-6xl">{row.title}</h2>
+              <p className="mt-2 max-w-[56ch] text-fog">{row.text}</p>
+            </div>
+            <Link href={row.href} className="flex items-center gap-1 text-sm font-semibold text-ember hover:text-gold">
+              Ver tudo <ArrowUpRight className="size-4" />
+            </Link>
           </div>
-          <Link href="/loja" className="flex items-center gap-1 text-sm font-semibold text-ember hover:text-gold">
-            Ver tudo <ArrowUpRight className="size-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} p={p} />
-          ))}
-        </div>
-      </section>
+          <DragRow label={row.title}>
+            {row.items.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
+          </DragRow>
+        </section>
+      ))}
 
       {/* CATEGORIAS */}
       <section className="mx-auto mt-24 max-w-[1320px] px-4 sm:px-6" aria-label="Categorias">

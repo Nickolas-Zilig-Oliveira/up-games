@@ -4,24 +4,19 @@ import { Children, useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
- * Fileira que se arrasta para o lado: mouse (arrastar), toque (nativo), setas e
- * teclado. Mostra uma barra de progresso e esmaece as bordas quando há mais itens.
+ * Fileira que desliza para o lado: arrastar com o mouse, deslizar com o dedo,
+ * setas laterais e teclado. 4 cards visíveis no desktop, 3 no tablet, ~1,5 no celular.
  */
 export function DragRow({ children, label }: { children: React.ReactNode; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: 0 });
-  const [state, setState] = useState({ progress: 0, canPrev: false, canNext: true, dragging: false });
+  const [state, setState] = useState({ canPrev: false, canNext: true, dragging: false });
 
   const measure = useCallback(() => {
     const el = ref.current;
     if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
-    setState((s) => ({
-      ...s,
-      progress: max > 0 ? el.scrollLeft / max : 0,
-      canPrev: el.scrollLeft > 4,
-      canNext: el.scrollLeft < max - 4,
-    }));
+    setState((s) => ({ ...s, canPrev: el.scrollLeft > 4, canNext: el.scrollLeft < max - 4 }));
   }, []);
 
   useEffect(() => {
@@ -61,8 +56,11 @@ export function DragRow({ children, label }: { children: React.ReactNode; label:
     el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
   }
 
+  const arrow =
+    "chamfer-sm absolute top-[38%] z-10 hidden size-12 -translate-y-1/2 place-items-center bg-void/85 text-chalk shadow-xl backdrop-blur transition-[opacity,background-color,color] hover:bg-ember hover:text-void sm:grid";
+
   return (
-    <div className="group/row relative">
+    <div className="relative">
       <div
         ref={ref}
         role="group"
@@ -91,24 +89,17 @@ export function DragRow({ children, label }: { children: React.ReactNode; label:
         }`}
       >
         {Children.map(children, (child) => (
-          <div className="w-[64vw] max-w-[300px] shrink-0 snap-start sm:w-[280px] lg:w-[300px]">{child}</div>
+          <div className="w-[64vw] max-w-[320px] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] sm:max-w-none lg:w-[calc((100%-3rem)/4)]">{child}</div>
         ))}
-        <div className="w-1 shrink-0" aria-hidden />
+        <div className="w-px shrink-0" aria-hidden />
       </div>
 
-      <div className="mt-4 flex items-center gap-4">
-        <div className="h-[3px] flex-1 bg-plate" aria-hidden>
-          <div className="h-full bg-ember transition-[width] duration-150" style={{ width: `${Math.max(8, state.progress * 100)}%` }} />
-        </div>
-        <div className="flex gap-1.5">
-          <button onClick={() => page(-1)} disabled={!state.canPrev} aria-label="Ver anteriores" className="chamfer-sm grid size-9 place-items-center bg-plate text-chalk transition-colors hover:bg-ember hover:text-void disabled:opacity-30 disabled:hover:bg-plate disabled:hover:text-chalk">
-            <ChevronLeft className="size-4" />
-          </button>
-          <button onClick={() => page(1)} disabled={!state.canNext} aria-label="Ver próximos" className="chamfer-sm grid size-9 place-items-center bg-plate text-chalk transition-colors hover:bg-ember hover:text-void disabled:opacity-30 disabled:hover:bg-plate disabled:hover:text-chalk">
-            <ChevronRight className="size-4" />
-          </button>
-        </div>
-      </div>
+      <button onClick={() => page(-1)} disabled={!state.canPrev} aria-label="Ver anteriores" className={`${arrow} -left-3 xl:-left-6 ${state.canPrev ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+        <ChevronLeft className="size-6" />
+      </button>
+      <button onClick={() => page(1)} disabled={!state.canNext} aria-label="Ver próximos" className={`${arrow} -right-3 xl:-right-6 ${state.canNext ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+        <ChevronRight className="size-6" />
+      </button>
     </div>
   );
 }
