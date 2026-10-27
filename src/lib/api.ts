@@ -13,6 +13,7 @@ export function dbFail(error: { message: string; code?: string }, status = 400) 
   if (error.code === "23505") return fail("Já existe um registro com esse valor.", 409);
   if (error.code === "23503") return fail("Esse item está em uso e não pode ser removido.", 409);
   if (error.code === "42501") return fail("Você não tem permissão para isso.", 403);
+  if (error.code === "22P02") return fail("Item não encontrado.", 404);
   console.error("[db]", error.code, error.message);
   return fail("Não foi possível concluir. Tente de novo.", 500);
 }
