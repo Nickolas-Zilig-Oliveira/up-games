@@ -49,10 +49,12 @@ export function dashboard(db: Database, days: number) {
   const sold = new Map<string, { name: string; qty: number; revenue: number }>();
   for (const o of inRange.filter(counts)) {
     for (const i of o.items) {
-      const cur = sold.get(i.productId) ?? { name: i.name, qty: 0, revenue: 0 };
+      // Produto removido do catálogo fica sem id: agrupa pelo nome para não misturar tudo.
+      const key = i.productId || i.name;
+      const cur = sold.get(key) ?? { name: i.name, qty: 0, revenue: 0 };
       cur.qty += i.qty;
       cur.revenue += i.qty * i.price;
-      sold.set(i.productId, cur);
+      sold.set(key, cur);
     }
   }
   const top = [...sold.entries()].map(([id, v]) => ({ id, ...v })).sort((a, b) => b.revenue - a.revenue).slice(0, 6);

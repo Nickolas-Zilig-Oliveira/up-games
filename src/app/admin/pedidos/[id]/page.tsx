@@ -32,7 +32,7 @@ export default async function AdminOrder({ params }: PageProps<"/admin/pedidos/[
               {o.items.map((i) => (
                 <li key={i.productId} className="flex items-center justify-between gap-4 py-3 text-sm">
                   <div>
-                    <Link href={`/admin/produtos/${i.productId}`} className="font-semibold hover:text-ember">{i.name}</Link>
+                    {i.productId ? <Link href={`/admin/produtos/${i.productId}`} className="font-semibold hover:text-ember">{i.name}</Link> : <span className="font-semibold">{i.name}</span>}
                     <p className="text-dim">{i.platform} · {i.qty} × {money(i.price)}</p>
                   </div>
                   <span className="tabular font-semibold">{money(i.qty * i.price)}</span>
