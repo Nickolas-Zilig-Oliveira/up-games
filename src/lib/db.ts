@@ -10,7 +10,10 @@ import { buildSeed } from "./seed";
  * por Supabase depois é questão de reimplementar `read`/`mutate`.
  */
 
-export const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data");
+// Na Vercel só /tmp aceita escrita — e é temporário: os dados voltam ao seed
+// quando a função reinicia. Para persistir de verdade, migrar para Supabase.
+export const DATA_DIR =
+  process.env.DATA_DIR || (process.env.VERCEL ? "/tmp/up-games" : path.join(process.cwd(), "data"));
 const DB_FILE = path.join(DATA_DIR, "db.json");
 export const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 
