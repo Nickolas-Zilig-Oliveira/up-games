@@ -196,7 +196,7 @@ export function ProductForm({ categories, platforms, product }: { categories: Ca
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={src} alt="" className="pointer-events-none h-full w-full object-cover" />
-                    {k === 0 && <span className="absolute left-1 top-1 bg-ember px-1.5 text-[10px] font-bold text-void">Capa</span>}
+                    {k === 0 && <span className="absolute left-1 top-1 bg-ember px-1.5 text-xs font-bold text-void">Capa</span>}
                     <button
                       type="button"
                       onClick={() => setImages((im) => im.filter((x) => x !== src))}

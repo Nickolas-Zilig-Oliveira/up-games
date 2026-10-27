@@ -107,7 +107,7 @@ export function AdminNav({ user, badges }: { user: { name: string; email: string
 
   return (
     <>
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 border-r border-line bg-[#110b22] px-4 py-6 lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 border-r border-line bg-[#211a42] px-4 py-6 lg:flex">
         {brand}
         <div className="flex-1 overflow-y-auto">{list}</div>
         {footer}

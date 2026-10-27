@@ -41,7 +41,7 @@ export function Header({ user, announcement, whatsapp }: { user: PublicUser | nu
   return (
     <>
       {announcement && (
-        <div className="relative z-40 bg-ember px-4 py-2 text-center text-[0.8rem] font-semibold text-void">{announcement}</div>
+        <div className="relative z-40 bg-ember px-4 py-2 text-center text-[0.9rem] font-semibold text-void">{announcement}</div>
       )}
       <header
         className={`sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${

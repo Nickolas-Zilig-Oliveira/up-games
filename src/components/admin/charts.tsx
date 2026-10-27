@@ -72,14 +72,14 @@ export function RevenueChart({ data }: { data: Point[] }) {
         {ticks.map((t) => (
           <g key={t}>
             <line x1={PAD.l} x2={W - PAD.r} y1={y(t)} y2={y(t)} stroke="rgb(190 160 255 / 0.1)" strokeDasharray={t ? "3 4" : undefined} />
-            <text x={PAD.l - 10} y={y(t)} dy="0.35em" textAnchor="end" className="fill-dim text-[11px]">
+            <text x={PAD.l - 10} y={y(t)} dy="0.35em" textAnchor="end" className="fill-dim text-[12.5px]">
               {short.format(t)}
             </text>
           </g>
         ))}
         {data.map((d, i) =>
           i % every === 0 ? (
-            <text key={d.date} x={x(i)} y={H - 8} textAnchor="middle" className="fill-dim text-[11px]">
+            <text key={d.date} x={x(i)} y={H - 8} textAnchor="middle" className="fill-dim text-[12.5px]">
               {dayFmt(d.date)}
             </text>
           ) : null,
@@ -99,7 +99,7 @@ export function RevenueChart({ data }: { data: Point[] }) {
         {h && hover !== null && (
           <g>
             <line x1={x(hover)} x2={x(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="rgb(244 239 255 / 0.35)" />
-            <circle cx={x(hover)} cy={y(h.revenue)} r={5} fill="#ff6b1a" stroke="#160f2a" strokeWidth={2} />
+            <circle cx={x(hover)} cy={y(h.revenue)} r={5} fill="#ff6b1a" stroke="#271d4d" strokeWidth={2} />
           </g>
         )}
       </svg>
