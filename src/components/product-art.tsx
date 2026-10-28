@@ -19,9 +19,15 @@ export function ProductArt({
   size?: "sm" | "md" | "lg";
 }) {
   if (image) {
+    // A foto aparece inteira (sem cortar), seja vertical ou horizontal; atrás dela
+    // vai a mesma imagem desfocada para preencher o quadrado.
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={image} alt={name} className={`h-full w-full object-cover ${className}`} loading="lazy" draggable={false} />
+      <div className={`relative h-full w-full overflow-hidden bg-plate ${className}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={image} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-125 object-cover opacity-70 blur-2xl" loading="lazy" draggable={false} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={image} alt={name} className="relative h-full w-full object-contain" loading="lazy" draggable={false} />
+      </div>
     );
   }
   const iconSize = size === "lg" ? "size-28" : size === "sm" ? "size-6" : "size-14";
