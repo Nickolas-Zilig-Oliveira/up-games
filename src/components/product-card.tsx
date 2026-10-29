@@ -20,7 +20,7 @@ export function ProductCard({ p }: { p: CardProduct }) {
                 <ProductArt image={p.images[0]} name={p.name} platform={p.platform} rarity={p.rarity} icon={p.category.icon} />
               </div>
               <div className="slot-shine pointer-events-none absolute inset-0" />
-              <span className="absolute left-3 top-3 bg-void/80 px-2 py-1 text-[0.8rem] font-semibold backdrop-blur">{p.platform}</span>
+              <span className="chamfer-sm absolute left-3 top-3 bg-plate-2 px-2.5 py-1 text-xs font-bold text-chalk">{p.platform}</span>
               {discount > 0 && (
                 <span className="chamfer-sm absolute right-3 top-3 bg-ember px-2 py-1 text-[0.8rem] font-bold text-void">-{discount}%</span>
               )}
@@ -32,13 +32,13 @@ export function ProductCard({ p }: { p: CardProduct }) {
             </div>
             <div className="h-[3px] w-full" style={{ background: "linear-gradient(90deg, transparent, var(--r), transparent)" }} />
             <div className="px-4 pb-4 pt-3">
-              <p className="flex items-center gap-1.5 text-[0.85rem] font-semibold">
+              <p className="flex items-center gap-1.5 text-[0.7rem] font-bold uppercase tracking-wider">
                 <span className="inline-block size-2 rotate-45" style={{ background: "var(--r)" }} />
                 <span className="rarity-text">{rarityLabel[p.rarity]}</span>
-                <span className="text-dim">/ {p.condition === "novo" ? "Novo" : "Seminovo"}</span>
+                <span className="font-semibold text-dim">· {p.condition === "novo" ? "Novo" : "Seminovo"}</span>
               </p>
-              <h3 className="mt-1.5 line-clamp-2 min-h-[2.6em] text-[1.02rem] font-semibold leading-snug text-chalk">{p.name}</h3>
-              <div className="mt-2 flex items-baseline gap-2">
+              <h3 className="mt-2 line-clamp-3 min-h-[3.9em] text-[0.95rem] font-semibold leading-[1.3] text-chalk">{p.name}</h3>
+              <div className="mt-3 flex items-baseline gap-2">
                 <span className="tabular text-lg font-bold">{money(p.price)}</span>
                 {discount > 0 && <span className="tabular text-xs text-dim line-through">{money(p.comparePrice!)}</span>}
               </div>
