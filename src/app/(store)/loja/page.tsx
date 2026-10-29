@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowUpRight, MoveHorizontal } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { catalog, filterProducts, type SortKey } from "@/lib/queries";
 import { ProductCard } from "@/components/product-card";
 import { FilterBar } from "@/components/store/filter-bar";
@@ -28,16 +28,11 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
 
   return (
     <div>
-      <div className="mx-auto max-w-[1320px] px-4 pb-6 pt-8 sm:px-6 lg:pt-10">
-        <h1 className="display t-page">{title}</h1>
-        <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-fog">
-          <span>
-            {list.length} {list.length === 1 ? "item" : "itens"}
-            {list.length !== products.length && ` de ${products.length}`}
-          </span>
-          <span className="flex items-center gap-1.5 text-sm text-dim">
-            <MoveHorizontal className="size-4 text-ember" /> arraste para o lado
-          </span>
+      <div className="mx-auto flex max-w-[1320px] flex-wrap items-end justify-between gap-x-6 gap-y-1 px-4 pb-5 pt-7 sm:px-6 lg:pt-9">
+        <h1 className="display t-section">{title}</h1>
+        <p className="pb-1 text-sm text-fog">
+          <span className="font-semibold text-chalk">{list.length}</span> {list.length === 1 ? "item" : "itens"}
+          {list.length !== products.length && ` de ${products.length}`}
         </p>
       </div>
 
@@ -51,7 +46,7 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
           .filter((p) => p.count > 0)}
       />
 
-      <div className="mx-auto max-w-[1320px] space-y-14 px-4 pb-10 pt-10 sm:px-6">
+      <div className="mx-auto max-w-[1320px] space-y-12 px-4 pb-10 pt-8 sm:px-6">
         {list.length === 0 ? (
           <div className="chamfer flex flex-col items-center gap-4 bg-deep px-6 py-20 text-center">
             <p className="display t-section">Nada por aqui</p>
@@ -64,14 +59,16 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
           rows.map((r) => (
             <section key={r.id} aria-label={r.name ?? "Resultado"}>
               {r.name && (
-                <div className="mb-5 flex items-end justify-between gap-4">
-                  <h2 className="display t-section flex items-center gap-3">
-                    <CategoryIcon name={r.icon} className="size-7 text-ember" />
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <h2 className="display t-tool flex items-center gap-3">
+                    <span className="chamfer-sm grid size-10 shrink-0 place-items-center bg-ember/15">
+                      <CategoryIcon name={r.icon} className="size-5 text-ember" />
+                    </span>
                     {r.name}
-                    <span className="tabular text-base font-semibold text-dim">{r.items.length}</span>
+                    <span className="tabular rounded-full bg-plate/70 px-2.5 py-0.5 font-sans text-xs font-bold text-fog">{r.items.length}</span>
                   </h2>
                   <Link href={`/loja?categoria=${r.slug}`} className="flex shrink-0 items-center gap-1 text-sm font-semibold text-ember hover:text-gold">
-                    Ver só {r.name.toLowerCase()} <ArrowUpRight className="size-4" />
+                    Ver tudo <ArrowUpRight className="size-4" />
                   </Link>
                 </div>
               )}
