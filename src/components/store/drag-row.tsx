@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  */
 export function DragRow({ children, label }: { children: React.ReactNode; label: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: 0 });
+  const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: 0, captured: false });
   const [state, setState] = useState({ canPrev: false, canNext: true, dragging: false });
 
   const measure = useCallback(() => {
@@ -31,8 +31,7 @@ export function DragRow({ children, label }: { children: React.ReactNode; label:
   function onPointerDown(e: React.PointerEvent<HTMLDivElement>) {
     if (e.pointerType !== "mouse" || e.button !== 0) return;
     const el = ref.current!;
-    drag.current = { active: true, startX: e.clientX, startLeft: el.scrollLeft, moved: 0 };
-    el.setPointerCapture(e.pointerId);
+    drag.current = { active: true, startX: e.clientX, startLeft: el.scrollLeft, moved: 0, captured: false };
   }
 
   function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
@@ -40,14 +39,20 @@ export function DragRow({ children, label }: { children: React.ReactNode; label:
     if (!d.active) return;
     const dx = e.clientX - d.startX;
     d.moved = Math.max(d.moved, Math.abs(dx));
-    if (d.moved > 5 && !state.dragging) setState((s) => ({ ...s, dragging: true }));
+    // Só "pega" o ponteiro quando for arrasto de verdade; senão o clique não chega ao link do card.
+    if (d.moved > 5 && !d.captured) {
+      d.captured = true;
+      ref.current!.setPointerCapture(e.pointerId);
+      setState((s) => ({ ...s, dragging: true }));
+    }
+    if (!d.captured) return;
     ref.current!.scrollLeft = d.startLeft - dx;
   }
 
   function end(e: React.PointerEvent<HTMLDivElement>) {
     if (!drag.current.active) return;
     drag.current.active = false;
-    ref.current?.releasePointerCapture(e.pointerId);
+    if (drag.current.captured) ref.current?.releasePointerCapture(e.pointerId);
     setState((s) => ({ ...s, dragging: false }));
   }
 
