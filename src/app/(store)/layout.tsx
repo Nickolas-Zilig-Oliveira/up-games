@@ -19,7 +19,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         href={`https://wa.me/${s.whatsapp}?text=${encodeURIComponent("Olá, Up Games! Vim pelo site.")}`}
         target="_blank"
         rel="noreferrer"
-        className="chamfer-sm fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 grid size-12 place-items-center bg-[#25d366] text-[#06260f] shadow-[0_6px_20px_rgb(0_0_0/0.25)] transition-transform hover:scale-105 sm:bottom-6 sm:right-6 sm:size-14"
+        data-wa-float className="chamfer-sm fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 grid size-12 place-items-center bg-[#25d366] text-[#06260f] shadow-[0_6px_20px_rgb(0_0_0/0.25)] transition-transform hover:scale-105 sm:bottom-6 sm:right-6 sm:size-14"
         aria-label="Falar no WhatsApp"
       >
         <WhatsIcon className="size-6 sm:size-7" />

@@ -50,7 +50,7 @@ export function Gallery(props: { images: string[]; name: string; platform: strin
             <button
               key={src}
               onClick={() => setI(k)}
-              className={`chamfer-sm size-20 shrink-0 bg-photo p-1 transition-[opacity,box-shadow] ${k === i ? "opacity-100 shadow-[inset_0_0_0_2px_var(--color-ember)]" : "opacity-60 hover:opacity-100"}`}
+              className={`chamfer-sm size-16 shrink-0 bg-photo sm:size-20 p-1 transition-[opacity,box-shadow] ${k === i ? "opacity-100 shadow-[inset_0_0_0_2px_var(--color-ember)]" : "opacity-60 hover:opacity-100"}`}
               aria-label={`Ver imagem ${k + 1}`}
               aria-current={k === i}
             >

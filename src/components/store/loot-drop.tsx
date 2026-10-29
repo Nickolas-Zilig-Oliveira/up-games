@@ -88,13 +88,13 @@ export function LootDrop({ items }: { items: DropItem[] }) {
       </div>
 
       {/* Ficha do item */}
-      <AnimatePresence mode="wait">
+      {/* Sem "wait": a ficha sempre entra, inclusive na primeira carga. */}
+      <div>
         <motion.div
           key={`card-${item.id}-${rolls}`}
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
-          transition={{ type: "spring", stiffness: 380, damping: 32, delay: rolls ? 0.2 : 0.25 }}
+          transition={{ type: "spring", stiffness: 380, damping: 32, delay: rolls ? 0.1 : 0.15 }}
           className="relative -mt-[9%] lg:absolute lg:-right-4 lg:bottom-[2%] lg:mt-0 lg:w-[250px]"
         >
           <div className="chamfer edge" style={{ background: "color-mix(in srgb, var(--r) 45%, transparent)" }}>
@@ -103,7 +103,7 @@ export function LootDrop({ items }: { items: DropItem[] }) {
                 <span className="inline-block size-2 rotate-45" style={{ background: "var(--r)" }} />
                 <span className="rarity-text">{rarityLabel[item.rarity]}</span>
               </p>
-              <h3 className="mt-1 text-lg font-bold leading-tight">{item.name}</h3>
+              <h3 className="mt-1 line-clamp-2 min-h-[2.5em] text-base font-bold leading-tight">{item.name}</h3>
               <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-sm">
                 <dt className="text-dim">Plataforma</dt>
                 <dd className="text-right font-medium">{item.platform}</dd>
@@ -138,7 +138,7 @@ export function LootDrop({ items }: { items: DropItem[] }) {
             </div>
           </div>
         </motion.div>
-      </AnimatePresence>
+      </div>
 
       <div className="mt-5 flex items-center justify-center gap-4 sm:justify-start">
         <button type="button" onClick={roll} className="btn btn-ghost btn-sm group">

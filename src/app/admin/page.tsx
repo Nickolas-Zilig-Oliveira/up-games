@@ -87,7 +87,7 @@ export default async function AdminHome({ searchParams }: PageProps<"/admin">) {
         {[
           { label: "Vendas", value: money(d.revenue), delta: <Delta v={d.revenueDelta} /> },
           { label: "Pedidos", value: String(d.orders), delta: <Delta v={d.ordersDelta} /> },
-          { label: "Ticket médio", value: money(d.ticket), delta: <span className="text-xs text-dim">valor médio por pedido</span> },
+          { label: "Ticket médio", value: money(d.ticket), delta: <span className="text-xs text-dim">por pedido</span> },
         ].map((k, i) => (
           <div key={k.label} className={`chamfer-sm bg-deep p-4 sm:p-5 ${i === 0 ? "col-span-2 sm:col-span-1" : ""}`}>
             <p className="text-sm text-fog">{k.label}</p>

@@ -10,7 +10,7 @@ export function SectionHeader({ id, title, text, href, linkLabel = "Ver tudo" }:
         {text && <p className="mt-2 max-w-[56ch] text-fog">{text}</p>}
       </div>
       {href && (
-        <Link href={href} className="flex shrink-0 items-center gap-1 pb-1 text-sm font-semibold text-ember transition-colors hover:text-gold">
+        <Link href={href} className="-my-2 flex min-h-11 shrink-0 items-center gap-1 text-sm font-semibold text-ember transition-colors hover:text-gold">
           {linkLabel} <ArrowUpRight className="size-4" />
         </Link>
       )}

@@ -63,7 +63,7 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
                     {r.name}
                     <span className="tabular font-sans text-sm font-semibold text-dim">{r.items.length}</span>
                   </h2>
-                  <Link href={`/loja?categoria=${r.slug}`} className="flex shrink-0 items-center gap-1 text-sm font-semibold text-ember hover:text-gold">
+                  <Link href={`/loja?categoria=${r.slug}`} className="-my-2 flex min-h-11 shrink-0 items-center gap-1 text-sm font-semibold text-ember hover:text-gold">
                     Ver tudo <ArrowUpRight className="size-4" />
                   </Link>
                 </div>

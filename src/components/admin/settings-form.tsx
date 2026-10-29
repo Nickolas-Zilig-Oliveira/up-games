@@ -110,9 +110,9 @@ export function SettingsForm({
               <li key={id} className="flex items-center gap-3 bg-plate/60 px-3 py-2 text-sm">
                 <span className="tabular w-5 font-bold text-ember">{i + 1}</span>
                 <span className="flex-1 truncate">{p.name} <span className="text-dim">· {p.platform}</span></span>
-                <button type="button" onClick={() => moveDrop(i, -1)} className="text-fog hover:text-chalk disabled:opacity-30" disabled={i === 0} aria-label="Subir"><ArrowUp className="size-4" /></button>
-                <button type="button" onClick={() => moveDrop(i, 1)} className="text-fog hover:text-chalk disabled:opacity-30" disabled={i === s.dropIds.length - 1} aria-label="Descer"><ArrowDown className="size-4" /></button>
-                <button type="button" onClick={() => setS((x) => ({ ...x, dropIds: x.dropIds.filter((d) => d !== id) }))} className="text-fog hover:text-bad" aria-label="Remover do drop"><X className="size-4" /></button>
+                <button type="button" onClick={() => moveDrop(i, -1)} className="grid size-9 place-items-center text-fog hover:text-chalk disabled:opacity-30" disabled={i === 0} aria-label="Subir"><ArrowUp className="size-4" /></button>
+                <button type="button" onClick={() => moveDrop(i, 1)} className="grid size-9 place-items-center text-fog hover:text-chalk disabled:opacity-30" disabled={i === s.dropIds.length - 1} aria-label="Descer"><ArrowDown className="size-4" /></button>
+                <button type="button" onClick={() => setS((x) => ({ ...x, dropIds: x.dropIds.filter((d) => d !== id) }))} className="grid size-9 place-items-center text-fog hover:text-bad" aria-label="Remover do drop"><X className="size-4" /></button>
               </li>
             );
           })}

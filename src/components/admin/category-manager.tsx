@@ -77,10 +77,10 @@ export function CategoryManager({ categories, counts }: { categories: Category[]
               <CategoryIcon name={c.icon} className="size-5 text-ember" />
               <span className="flex-1 font-semibold">{c.name}</span>
               <span className="tabular text-sm text-fog">{counts[c.id] ?? 0} produtos</span>
-              <button onClick={() => setEditing({ id: c.id, name: c.name, icon: c.icon })} className="text-fog hover:text-chalk" aria-label={`Editar ${c.name}`}>
+              <button onClick={() => setEditing({ id: c.id, name: c.name, icon: c.icon })} className="grid size-10 place-items-center text-fog hover:text-chalk" aria-label={`Editar ${c.name}`}>
                 <Pencil className="size-4" />
               </button>
-              <button onClick={() => remove(c.id)} className="text-fog hover:text-bad" aria-label={`Excluir ${c.name}`}>
+              <button onClick={() => remove(c.id)} className="grid size-10 place-items-center text-fog hover:text-bad" aria-label={`Excluir ${c.name}`}>
                 <Trash2 className="size-4" />
               </button>
             </li>

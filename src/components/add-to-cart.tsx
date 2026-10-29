@@ -8,11 +8,13 @@ export function AddToCartButton({
   line,
   disabled,
   compact,
+  bar,
   qty = 1,
 }: {
   line: Omit<CartLine, "qty">;
   disabled?: boolean;
   compact?: boolean;
+  bar?: boolean;
   qty?: number;
 }) {
   const { add, lines, setOpen } = useCart();
@@ -49,9 +51,9 @@ export function AddToCartButton({
   }
 
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className="btn btn-ember h-14 flex-1 text-base">
+    <button type="button" onClick={onClick} disabled={disabled} className={`btn btn-ember flex-1 ${bar ? "h-12 px-3 text-[0.95rem]" : "h-14 text-base"}`}>
       {done ? <Check className="size-5" /> : <ShoppingBag className="size-5" />}
-      {disabled ? "Esgotado" : done ? "Adicionado" : "Adicionar ao carrinho"}
+      {disabled ? "Esgotado" : done ? "Adicionado" : bar ? "Adicionar" : "Adicionar ao carrinho"}
     </button>
   );
 }

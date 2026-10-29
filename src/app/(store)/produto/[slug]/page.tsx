@@ -8,6 +8,7 @@ import { money, rarityLabel } from "@/lib/format";
 import { ProductCard } from "@/components/product-card";
 import { Gallery } from "@/components/store/gallery";
 import { BuyBox } from "@/components/store/buy-box";
+import { DragRow } from "@/components/store/drag-row";
 
 export async function generateMetadata({ params }: PageProps<"/produto/[slug]">): Promise<Metadata> {
   const { slug } = await params;
@@ -29,16 +30,16 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
   const stockPct = Math.min(1, p.stock / 10);
 
   return (
-    <div className="mx-auto max-w-[1320px] px-4 pb-10 pt-6 sm:px-6">
-      <nav className="mb-6 flex items-center gap-1.5 text-sm text-dim" aria-label="Você está em">
-        <Link href="/loja" className="hover:text-chalk">Loja</Link>
+    <div className="mx-auto max-w-[1320px] px-4 pb-28 pt-4 sm:px-6 lg:pb-10 lg:pt-6">
+      <nav className="mb-4 flex items-center gap-1.5 text-sm text-dim lg:mb-6" aria-label="Você está em">
+        <Link href="/loja" className="py-2 hover:text-chalk">Loja</Link>
         <ChevronRight className="size-3.5" />
-        <Link href={`/loja?categoria=${p.category.slug}`} className="hover:text-chalk">{p.category.name}</Link>
+        <Link href={`/loja?categoria=${p.category.slug}`} className="py-2 hover:text-chalk">{p.category.name}</Link>
         <ChevronRight className="size-3.5" />
         <span className="truncate text-fog">{p.name}</span>
       </nav>
 
-      <div data-rarity={p.rarity} className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
+      <div data-rarity={p.rarity} className="grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
         <Gallery images={p.images} name={p.name} platform={p.platform} rarity={p.rarity} icon={p.category.icon} />
 
         <div>
@@ -49,8 +50,8 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
           </p>
           <h1 className="display t-section mt-3 text-balance">{p.name}</h1>
 
-          <div className="mt-6 flex flex-wrap items-baseline gap-3">
-            <span className="tabular text-4xl font-bold">{money(p.price)}</span>
+          <div className="mt-4 flex flex-wrap items-baseline gap-3 lg:mt-6">
+            <span className="tabular text-3xl font-bold sm:text-4xl">{money(p.price)}</span>
             {discount > 0 && (
               <>
                 <span className="tabular text-lg text-dim line-through">{money(p.comparePrice!)}</span>
@@ -59,7 +60,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
             )}
           </div>
 
-          <div className="mt-6 max-w-sm">
+          <div className="mt-5 max-w-sm lg:mt-6">
             <div className="flex justify-between text-sm">
               <span className="text-fog">Estoque</span>
               <span className={`tabular font-semibold ${p.stock <= p.minStock ? "text-ember" : "text-chalk"}`}>
@@ -79,7 +80,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
 
           <BuyBox line={toCartLine(p)} favorite={!!user?.favorites.includes(p.id)} loggedIn={!!user} />
 
-          <ul className="mt-8 grid gap-3 text-sm sm:grid-cols-3">
+          <ul className="mt-6 grid gap-3 text-sm sm:grid-cols-3 lg:mt-8">
             <li className="flex gap-2.5 text-fog">
               <Store className="size-5 shrink-0 text-ember" /> Retire na loja no mesmo dia
             </li>
@@ -109,7 +110,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
             href={`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(`Oi! Tenho uma dúvida sobre ${p.name} (${p.sku}).`)}`}
             target="_blank"
             rel="noreferrer"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-ember hover:text-gold"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-ember hover:text-gold"
           >
             <MessageCircle className="size-4" /> Tirar dúvida no WhatsApp
           </a>
@@ -117,13 +118,13 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
       </div>
 
       {related.length > 0 && (
-        <section className="mt-24">
-          <h2 className="display t-section mb-6">Combina com</h2>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <section className="mt-14 lg:mt-20">
+          <h2 className="display t-section mb-4">Combina com</h2>
+          <DragRow label="Combina com">
             {related.map((r) => (
               <ProductCard key={r.id} p={r} />
             ))}
-          </div>
+          </DragRow>
         </section>
       )}
     </div>

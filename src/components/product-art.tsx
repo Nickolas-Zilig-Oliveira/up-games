@@ -44,7 +44,7 @@ export function ProductArt({
         <span
           className="display pointer-events-none absolute -bottom-[0.12em] left-0 right-0 truncate text-center text-transparent select-none"
           style={{
-            fontSize: size === "lg" ? "8rem" : "4.2rem",
+            fontSize: size === "lg" ? "clamp(4.5rem, 16vw, 8rem)" : "3rem",
             WebkitTextStroke: "1px color-mix(in srgb, var(--r) 45%, transparent)",
           }}
           aria-hidden

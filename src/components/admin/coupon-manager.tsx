@@ -61,7 +61,7 @@ export function CouponManager({ coupons }: { coupons: Coupon[] }) {
               <input type="checkbox" checked={c.active} onChange={() => toggle(c)} className="size-4 accent-[var(--color-ember)]" />
               Ativo
             </label>
-            <button onClick={() => remove(c)} className="text-fog hover:text-bad" aria-label={`Excluir ${c.code}`}>
+            <button onClick={() => remove(c)} className="grid size-10 place-items-center text-fog hover:text-bad" aria-label={`Excluir ${c.code}`}>
               <Trash2 className="size-4" />
             </button>
           </li>

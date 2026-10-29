@@ -44,7 +44,7 @@ export function FilterBar({ categories, platforms, total }: { categories: Option
   }
 
   const chip = (on: boolean) =>
-    `shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1 text-[0.8rem] font-semibold leading-5 transition-colors ${
+    `shrink-0 whitespace-nowrap rounded-md border px-3 py-2 text-[0.8rem] font-semibold leading-5 sm:px-2.5 sm:py-1 transition-colors ${
       on ? "border-chalk bg-chalk text-void" : "border-line-strong text-fog hover:border-chalk hover:text-chalk"
     }`;
 

@@ -30,19 +30,19 @@ export function Footer({ s, categories = [] }: { s: Settings; categories?: NavCa
         </div>
         <div>
           <h3 className="mb-3 text-sm font-semibold text-chalk">Loja</h3>
-          <ul className="space-y-2 text-sm text-fog">
-            <li><Link className="hover:text-chalk" href="/loja">Toda a loja</Link></li>
+          <ul className="text-sm text-fog">
+            <li><Link className="inline-block py-2 hover:text-chalk" href="/loja">Toda a loja</Link></li>
             {categories.map((c) => (
-              <li key={c.id}><Link className="hover:text-chalk" href={`/loja?categoria=${c.slug}`}>{c.name}</Link></li>
+              <li key={c.id}><Link className="inline-block py-2 hover:text-chalk" href={`/loja?categoria=${c.slug}`}>{c.name}</Link></li>
             ))}
           </ul>
         </div>
         <div>
           <h3 className="mb-3 text-sm font-semibold text-chalk">Sua conta</h3>
-          <ul className="space-y-2 text-sm text-fog">
-            <li><Link className="hover:text-chalk" href="/minha-conta/pedidos">Meus pedidos</Link></li>
-            <li><Link className="hover:text-chalk" href="/minha-conta/favoritos">Favoritos</Link></li>
-            <li><Link className="hover:text-chalk" href="/#troca">Trocar meus jogos</Link></li>
+          <ul className="text-sm text-fog">
+            <li><Link className="inline-block py-2 hover:text-chalk" href="/minha-conta/pedidos">Meus pedidos</Link></li>
+            <li><Link className="inline-block py-2 hover:text-chalk" href="/minha-conta/favoritos">Favoritos</Link></li>
+            <li><Link className="inline-block py-2 hover:text-chalk" href="/#troca">Trocar meus jogos</Link></li>
           </ul>
         </div>
         <div>

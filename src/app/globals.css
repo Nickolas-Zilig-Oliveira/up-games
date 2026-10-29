@@ -326,3 +326,8 @@ select.field {
     scroll-behavior: auto !important;
   }
 }
+
+/* Na página de produto (celular) a barra de compra ocupa o rodapé: o WhatsApp sai do caminho. */
+@media (max-width: 1023px) {
+  body:has([data-buybar]) [data-wa-float] { display: none; }
+}

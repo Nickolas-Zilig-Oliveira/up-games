@@ -62,15 +62,11 @@ export function BannerCarousel({ banners }: { banners: Banner[] }) {
       </div>
 
       {banners.length > 1 && (
-        <div className="mt-3 flex justify-center gap-1.5">
+        <div className="flex justify-center">
           {banners.map((b, i) => (
-            <button
-              key={b.id}
-              onClick={() => go(i)}
-              aria-label={`Ir para o banner ${i + 1}`}
-              aria-current={i === index}
-              className={`h-1.5 -skew-x-[20deg] transition-all duration-300 ${i === index ? "w-7 bg-ember" : "w-3 bg-line-strong hover:bg-dim"}`}
-            />
+            <button key={b.id} onClick={() => go(i)} aria-label={`Ir para o banner ${i + 1}`} aria-current={i === index} className="grid h-8 place-items-center px-0.5">
+              <span className={`block h-1.5 -skew-x-[20deg] transition-all duration-300 ${i === index ? "w-7 bg-ember" : "w-3 bg-line-strong"}`} />
+            </button>
           ))}
         </div>
       )}
