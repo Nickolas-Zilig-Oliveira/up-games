@@ -6,7 +6,8 @@ import { InstagramIcon, TikTokIcon, WhatsIcon } from "../icons";
 export function Footer({ s, categories = [] }: { s: Settings; categories?: NavCategory[] }) {
   return (
     <footer className="relative mt-24 overflow-hidden border-t border-line">
-      <div className="mx-auto grid max-w-[1320px] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="mx-auto max-w-[1320px] px-4 pt-14 sm:px-6">
+      <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,10 +52,11 @@ export function Footer({ s, categories = [] }: { s: Settings; categories?: NavCa
           <p className="mt-2 text-sm text-fog">{s.phone}</p>
         </div>
       </div>
-      <div className="border-t border-line">
-        <p className="mx-auto max-w-[1320px] px-4 py-5 text-xs text-dim sm:px-6">
-          © {new Date().getFullYear()} Up Games. Preços e estoque sujeitos a alteração.
-        </p>
+
+      <div className="mt-10 flex flex-col gap-1 border-t border-line pb-20 pt-6 text-xs text-dim sm:flex-row sm:items-center sm:justify-between sm:pb-6 sm:pr-20">
+        <p>© {new Date().getFullYear()} Up Games. Todos os direitos reservados.</p>
+        <p>Preços e estoque sujeitos a alteração.</p>
+      </div>
       </div>
     </footer>
   );
