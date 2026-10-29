@@ -10,7 +10,7 @@ export default async function Checkout() {
   const settings = await getSettings();
   return (
     <div className="mx-auto max-w-[1180px] px-4 pb-10 pt-8 sm:px-6">
-      <h1 className="display mb-8 text-[clamp(3rem,7vw,5.5rem)]">Finalizar compra</h1>
+      <h1 className="display t-page mb-8">Finalizar compra</h1>
       <CheckoutForm
         user={{ name: user.name, phone: user.phone ?? "", addresses: user.addresses }}
         deliveryFee={settings.deliveryFee}

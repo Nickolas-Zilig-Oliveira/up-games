@@ -45,16 +45,17 @@ export function Gallery(props: { images: string[]; name: string; platform: strin
         </div>
       </div>
       {images.length > 1 && (
-        <div className="mt-3 flex gap-2">
+        <div className="scrollbar-none mt-3 flex gap-2 overflow-x-auto">
           {images.map((src, k) => (
             <button
               key={src}
               onClick={() => setI(k)}
-              className={`chamfer-sm size-20 overflow-hidden transition-opacity ${k === i ? "opacity-100 ring-2 ring-ember" : "opacity-50 hover:opacity-90"}`}
+              className={`chamfer-sm size-20 shrink-0 bg-photo p-1 transition-[opacity,box-shadow] ${k === i ? "opacity-100 shadow-[inset_0_0_0_2px_var(--color-ember)]" : "opacity-60 hover:opacity-100"}`}
               aria-label={`Ver imagem ${k + 1}`}
+              aria-current={k === i}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" className="h-full w-full object-cover" />
+              <img src={src} alt="" className="h-full w-full object-contain" />
             </button>
           ))}
         </div>

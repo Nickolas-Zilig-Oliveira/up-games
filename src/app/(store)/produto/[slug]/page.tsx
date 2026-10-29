@@ -47,7 +47,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
             <span className="rarity-text">{rarityLabel[p.rarity]}</span>
             <span className="font-medium text-dim">/ {p.platform} / {p.condition === "novo" ? "Novo" : "Seminovo"}</span>
           </p>
-          <h1 className="display mt-3 text-[clamp(2.8rem,5.5vw,4.8rem)]">{p.name}</h1>
+          <h1 className="display t-section mt-3 text-balance">{p.name}</h1>
 
           <div className="mt-6 flex flex-wrap items-baseline gap-3">
             <span className="tabular text-4xl font-bold">{money(p.price)}</span>
@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
 
       {related.length > 0 && (
         <section className="mt-24">
-          <h2 className="display mb-6 text-5xl">Combina com</h2>
+          <h2 className="display t-section mb-6">Combina com</h2>
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {related.map((r) => (
               <ProductCard key={r.id} p={r} />

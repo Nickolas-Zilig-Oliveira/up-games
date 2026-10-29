@@ -4,22 +4,41 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronRight, Disc3, Gamepad2, LayoutDashboard, MapPin, Menu, Monitor, Repeat, Search, ShoppingBag, User, X } from "lucide-react";
+import { ChevronRight, LayoutDashboard, MapPin, Menu, Package, Repeat, Search, ShoppingBag, User, X } from "lucide-react";
 import type { PublicUser } from "@/lib/types";
+import type { NavCategory } from "@/lib/db";
 import { useCart } from "../providers";
-import { WhatsIcon } from "../icons";
+import { WhatsIcon, categoryIcons } from "../icons";
 import { ThemeToggle } from "../theme-toggle";
 
-const nav = [
-  { href: "/loja", label: "Loja", icon: ShoppingBag, text: "Tudo o que está na prateleira" },
-  { href: "/loja?categoria=jogos", label: "Jogos", icon: Disc3, text: "PS5, PS4, PS3 e Xbox" },
-  { href: "/loja?categoria=consoles", label: "Consoles", icon: Monitor, text: "Revisados na loja" },
-  { href: "/loja?categoria=controles", label: "Controles", icon: Gamepad2, text: "Originais e com garantia" },
-  { href: "/#troca", label: "Troca", icon: Repeat, text: "Avaliamos seus jogos na hora" },
-  { href: "/#visite", label: "Visite", icon: MapPin, text: "Jardim Ranieri, São Paulo" },
-];
+/** Menu montado com as categorias que têm produto — nenhum link leva a página vazia. */
+function buildNav(categories: NavCategory[]) {
+  return [
+    { href: "/loja", label: "Loja", icon: ShoppingBag, text: "Tudo o que está na prateleira" },
+    ...categories.slice(0, 3).map((c) => ({
+      href: `/loja?categoria=${c.slug}`,
+      label: c.name,
+      icon: categoryIcons[c.icon] ?? Package,
+      text: `${c.count} ${c.count === 1 ? "item" : "itens"} na loja`,
+    })),
+    { href: "/#troca", label: "Troca", icon: Repeat, text: "Avaliamos seus jogos na hora" },
+    { href: "/#visite", label: "Visite", icon: MapPin, text: "Jardim Ranieri, São Paulo" },
+  ];
+}
 
-export function Header({ user, announcement, whatsapp }: { user: PublicUser | null; announcement?: string; whatsapp?: string }) {
+export function Header({
+  user,
+  announcement,
+  whatsapp,
+  categories = [],
+}: {
+  user: PublicUser | null;
+  announcement?: string;
+  whatsapp?: string;
+  categories?: NavCategory[];
+}) {
+  const nav = buildNav(categories);
+  const shortAnnouncement = announcement?.split("·")[0].trim();
   const { count, setOpen, bump } = useCart();
   const [menu, setMenu] = useState(false);
   const [search, setSearch] = useState(false);
@@ -42,7 +61,10 @@ export function Header({ user, announcement, whatsapp }: { user: PublicUser | nu
   return (
     <>
       {announcement && (
-        <div className="relative z-40 bg-ember px-4 py-2 text-center text-[0.9rem] font-semibold text-void">{announcement}</div>
+        <div className="relative z-40 bg-ember px-4 py-2 text-center text-sm font-semibold text-void">
+          <span className="sm:hidden">{shortAnnouncement}</span>
+          <span className="hidden sm:inline">{announcement}</span>
+        </div>
       )}
       <header
         className={`sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${

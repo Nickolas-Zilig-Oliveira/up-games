@@ -1,9 +1,9 @@
 export function PageHeader({ title, text, children }: { title: string; text?: string; children?: React.ReactNode }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
       <div>
-        <h1 className="display text-5xl sm:text-6xl">{title}</h1>
-        {text && <p className="mt-2 max-w-[62ch] text-fog">{text}</p>}
+        <h1 className="display t-tool">{title}</h1>
+        {text && <p className="mt-1.5 max-w-[68ch] text-sm text-fog sm:text-[0.95rem]">{text}</p>}
       </div>
       {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
     </div>

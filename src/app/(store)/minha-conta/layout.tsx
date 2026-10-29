@@ -25,7 +25,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm text-fog">Olá,</p>
-            <h1 className="display truncate text-5xl sm:text-6xl">{user.name}</h1>
+            <h1 className="display t-section break-words text-balance">{user.name}</h1>
           </div>
           <div className="w-full sm:w-64">
             <div className="flex items-baseline justify-between text-sm">
@@ -34,7 +34,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
             </div>
             <div className="mt-2 flex gap-[3px]">
               {Array.from({ length: 12 }).map((_, k) => (
-                <span key={k} className="h-2.5 flex-1 -skew-x-[20deg]" style={{ background: k < Math.round(xp * 12) ? "var(--color-gold)" : "rgb(255 255 255 / 0.08)" }} />
+                <span key={k} className="h-2.5 flex-1 -skew-x-[20deg]" style={{ background: k < Math.round(xp * 12) ? "var(--color-gold)" : "var(--color-line-strong)" }} />
               ))}
             </div>
           </div>

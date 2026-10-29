@@ -33,7 +33,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/mi
       {novo && o.status === "pendente" && (
         <div className="chamfer relative overflow-hidden bg-gradient-to-r from-ember/25 to-violet/20 p-6 sm:p-8">
           <ConfettiBurst />
-          <p className="display text-5xl sm:text-6xl">Pedido feito!</p>
+          <p className="display t-section">Pedido feito!</p>
           <p className="mt-3 max-w-[60ch] text-chalk/90">
             {o.payment === "pix"
               ? "Chama a gente no WhatsApp para receber a chave Pix. Assim que o pagamento cair, separamos seus itens."
@@ -48,7 +48,7 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/mi
       )}
 
       <div className="flex flex-wrap items-center gap-4">
-        <h2 className="display text-5xl">Pedido #{o.number}</h2>
+        <h2 className="display t-section">Pedido #{o.number}</h2>
         <StatusBadge status={o.status} />
         <span className="text-sm text-dim">{dateTimeBR(o.createdAt)}</span>
       </div>

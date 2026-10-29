@@ -19,14 +19,12 @@ export function ProductArt({
   size?: "sm" | "md" | "lg";
 }) {
   if (image) {
-    // A foto aparece inteira (sem cortar), seja vertical ou horizontal; atrás dela
-    // vai a mesma imagem desfocada para preencher o quadrado.
+    // A foto aparece inteira (sem cortar), centralizada num fundo neutro de vitrine.
+    const pad = size === "sm" ? "p-1" : size === "lg" ? "p-[5%]" : "p-[7%]";
     return (
-      <div className={`relative h-full w-full overflow-hidden bg-plate ${className}`}>
+      <div className={`h-full w-full bg-photo ${pad} ${className}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={image} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-125 object-cover opacity-70 blur-2xl" loading="lazy" draggable={false} />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={image} alt={name} className="relative h-full w-full object-contain" loading="lazy" draggable={false} />
+        <img src={image} alt={name} className="h-full w-full object-contain" loading="lazy" draggable={false} />
       </div>
     );
   }

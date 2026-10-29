@@ -76,14 +76,14 @@ export default async function AdminOrders({ searchParams }: PageProps<"/admin/pe
               <tr key={o.id}>
                 <td>
                   <Link href={`/admin/pedidos/${o.id}`} className="tabular font-bold hover:text-ember">#{o.number}</Link>
-                  <span className="block text-xs text-dim">{dateTimeBR(o.createdAt)}</span>
+                  <span className="block whitespace-nowrap text-xs text-dim">{dateTimeBR(o.createdAt)}</span>
                 </td>
                 <td>
                   <span className="font-medium">{o.customer.name}</span>
                   <span className="block text-xs text-dim">{o.customer.email}</span>
                 </td>
                 <td className="max-w-[220px] truncate text-fog">{o.items.map((i) => `${i.qty}× ${i.name}`).join(", ")}</td>
-                <td className="text-fog">{o.delivery === "retirada" ? "Retirada" : "Entrega"} · {o.payment === "pix" ? "Pix" : "Na hora"}</td>
+                <td className="whitespace-nowrap text-fog">{o.delivery === "retirada" ? "Retirada" : "Entrega"} · {o.payment === "pix" ? "Pix" : "Na hora"}</td>
                 <td><StatusBadge status={o.status} /></td>
                 <td className="tabular text-right font-semibold">{money(o.total)}</td>
               </tr>

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* "dark:" segue o botão de tema (data-theme), não a preferência do sistema */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-void: #1b1435;
   --color-deep: #271d4d;
@@ -21,6 +24,9 @@
   --color-r-raro: #3fa9ff;
   --color-r-epico: #b264ff;
   --color-r-lendario: #ff9a1f;
+
+  /* Fundo das fotos de produto: neutro nos dois temas, como numa vitrine */
+  --color-photo: #ffffff;
 
   --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
   --font-sans: var(--font-hanken), system-ui, sans-serif;
@@ -133,6 +139,12 @@ body {
   outline: 2px solid var(--color-gold);
   outline-offset: 3px;
 }
+/* O recorte (clip-path) corta o contorno de fora: nesses elementos o foco fica por dentro */
+.btn:focus-visible,
+[class*="chamfer"]:focus-visible,
+[class*="chamfer"] :focus-visible {
+  outline-offset: -3px;
+}
 
 @layer components {
 /* Cantos chanfrados — o recorte da estrela da logo vira linguagem de forma */
@@ -151,6 +163,20 @@ body {
 .edge {
   padding: 1px;
   background: var(--color-line);
+}
+
+/* Escala de títulos: um tamanho por papel, usada em todo o site */
+.t-hero {
+  font-size: clamp(2.75rem, 6.2vw, 6rem);
+}
+.t-page {
+  font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+}
+.t-section {
+  font-size: clamp(2.125rem, 3.6vw, 3.25rem);
+}
+.t-tool {
+  font-size: clamp(1.875rem, 2.6vw, 2.375rem);
 }
 
 .display {

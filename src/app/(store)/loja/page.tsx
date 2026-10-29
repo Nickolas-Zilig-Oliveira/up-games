@@ -28,9 +28,9 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
 
   return (
     <div>
-      <div className="mx-auto max-w-[1320px] px-4 pb-8 pt-10 sm:px-6">
-        <h1 className="display text-[clamp(3.4rem,10vw,8.5rem)]">{title}</h1>
-        <p className="mt-3 flex items-center gap-3 text-fog">
+      <div className="mx-auto max-w-[1320px] px-4 pb-6 pt-8 sm:px-6 lg:pt-10">
+        <h1 className="display t-page">{title}</h1>
+        <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-fog">
           <span>
             {list.length} {list.length === 1 ? "item" : "itens"}
             {list.length !== products.length && ` de ${products.length}`}
@@ -43,7 +43,9 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
 
       <FilterBar
         total={products.length}
-        categories={categories.map((c) => ({ value: c.slug, label: c.name, count: products.filter((p) => p.categoryId === c.id).length }))}
+        categories={categories
+          .map((c) => ({ value: c.slug, label: c.name, count: products.filter((p) => p.categoryId === c.id).length }))
+          .filter((c) => c.count > 0 || c.value === sp.categoria)}
         platforms={settings.platforms
           .map((pl) => ({ value: pl, label: pl, count: products.filter((p) => p.platform === pl).length }))
           .filter((p) => p.count > 0)}
@@ -52,7 +54,7 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
       <div className="mx-auto max-w-[1320px] space-y-14 px-4 pb-10 pt-10 sm:px-6">
         {list.length === 0 ? (
           <div className="chamfer flex flex-col items-center gap-4 bg-deep px-6 py-20 text-center">
-            <p className="display text-4xl">Nada por aqui</p>
+            <p className="display t-section">Nada por aqui</p>
             <p className="max-w-[46ch] text-fog">
               Não achamos itens com esses filtros. Limpe os filtros ou chame no WhatsApp que a gente procura para você.
             </p>
@@ -63,7 +65,7 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
             <section key={r.id} aria-label={r.name ?? "Resultado"}>
               {r.name && (
                 <div className="mb-5 flex items-end justify-between gap-4">
-                  <h2 className="display flex items-center gap-3 text-4xl sm:text-5xl">
+                  <h2 className="display t-section flex items-center gap-3">
                     <CategoryIcon name={r.icon} className="size-7 text-ember" />
                     {r.name}
                     <span className="tabular text-base font-semibold text-dim">{r.items.length}</span>

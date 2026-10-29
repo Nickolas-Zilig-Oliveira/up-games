@@ -162,6 +162,22 @@ export async function getSettings(): Promise<Settings> {
   return { ...defaultSettings, ...(data?.data ?? {}) };
 }
 
+export type NavCategory = Category & { count: number };
+
+/** Categorias que têm pelo menos um produto à venda, na ordem do menu. */
+export async function getNavCategories(): Promise<NavCategory[]> {
+  const supabase = await createClient();
+  const [cats, prods] = await Promise.all([
+    supabase.from("categories").select("*").order("position").order("name"),
+    supabase.from("products").select("category_id").eq("active", true),
+  ]);
+  const count = new Map<string, number>();
+  for (const p of prods.data ?? []) count.set(p.category_id, (count.get(p.category_id) ?? 0) + 1);
+  return (cats.data ?? [])
+    .map((c) => ({ ...mapCategory(c), count: count.get(c.id) ?? 0 }))
+    .filter((c) => c.count > 0);
+}
+
 /** Quantos pedidos esperam atendimento (pendente ou pago). */
 export async function countOrdersToHandle(): Promise<number> {
   const supabase = await createClient();
