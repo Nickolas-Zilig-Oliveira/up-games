@@ -110,7 +110,7 @@ export default async function Home() {
       </section>
 
       {/* VISITE */}
-      <section id="visite" className="mx-auto mt-20 grid max-w-[1320px] scroll-mt-28 gap-8 px-4 sm:px-6 lg:mt-24 lg:grid-cols-[1fr_1.3fr] lg:gap-12">
+      <section id="visite" className="mx-auto mt-20 max-w-[1320px] scroll-mt-28 px-4 sm:px-6 lg:mt-24">
         <div>
           <h2 className="display t-section">Passa na loja</h2>
           <p className="mt-3 max-w-[42ch] text-fog">
@@ -143,15 +143,6 @@ export default async function Home() {
           <a href={s.mapsUrl} target="_blank" rel="noreferrer" className="btn btn-ghost mt-6">
             Abrir rota no Google Maps <ArrowUpRight className="size-4" />
           </a>
-        </div>
-        <div className="chamfer min-h-[340px] overflow-hidden bg-deep lg:min-h-[420px]" style={{ "--cut": "24px" } as React.CSSProperties}>
-          <iframe
-            title="Mapa da Up Games"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(s.address)}&output=embed`}
-            className="h-full min-h-[340px] w-full lg:min-h-[420px] dark:contrast-[0.9] dark:grayscale dark:hue-rotate-180 dark:invert-[0.92]"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
         </div>
       </section>
     </>
