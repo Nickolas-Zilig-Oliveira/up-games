@@ -5,7 +5,6 @@ import { catalog, filterProducts, type SortKey } from "@/lib/queries";
 import { ProductCard } from "@/components/product-card";
 import { FilterBar } from "@/components/store/filter-bar";
 import { DragRow } from "@/components/store/drag-row";
-import { CategoryIcon } from "@/components/icons";
 
 export const metadata: Metadata = { title: "Loja" };
 
@@ -46,7 +45,7 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
           .filter((p) => p.count > 0)}
       />
 
-      <div className="mx-auto max-w-[1320px] space-y-12 px-4 pb-10 pt-8 sm:px-6">
+      <div className="mx-auto max-w-[1320px] space-y-12 px-4 pb-10 pt-7 sm:px-6">
         {list.length === 0 ? (
           <div className="chamfer flex flex-col items-center gap-4 bg-deep px-6 py-20 text-center">
             <p className="display t-section">Nada por aqui</p>
@@ -59,13 +58,10 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
           rows.map((r) => (
             <section key={r.id} aria-label={r.name ?? "Resultado"}>
               {r.name && (
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <h2 className="display t-tool flex items-center gap-3">
-                    <span className="chamfer-sm grid size-10 shrink-0 place-items-center bg-ember/15">
-                      <CategoryIcon name={r.icon} className="size-5 text-ember" />
-                    </span>
+                <div className="mb-4 flex items-baseline justify-between gap-4">
+                  <h2 className="display t-tool flex items-baseline gap-2.5">
                     {r.name}
-                    <span className="tabular rounded-full bg-plate/70 px-2.5 py-0.5 font-sans text-xs font-bold text-fog">{r.items.length}</span>
+                    <span className="tabular font-sans text-sm font-semibold text-dim">{r.items.length}</span>
                   </h2>
                   <Link href={`/loja?categoria=${r.slug}`} className="flex shrink-0 items-center gap-1 text-sm font-semibold text-ember hover:text-gold">
                     Ver tudo <ArrowUpRight className="size-4" />

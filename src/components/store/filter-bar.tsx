@@ -43,95 +43,56 @@ export function FilterBar({ categories, platforms, total }: { categories: Option
     start(() => router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false }));
   }
 
-  const label = "mb-1 block text-[0.7rem] font-bold uppercase tracking-wider text-dim";
+  const chip = (on: boolean) =>
+    `shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1 text-[0.8rem] font-semibold leading-5 transition-colors ${
+      on ? "border-chalk bg-chalk text-void" : "border-line-strong text-fog hover:border-chalk hover:text-chalk"
+    }`;
 
   return (
     <div className="mx-auto max-w-[1320px] px-4 sm:px-6">
-      <div className="chamfer-sm relative overflow-hidden bg-deep p-3 sm:p-4" style={{ "--cut": "14px" } as React.CSSProperties}>
-        <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-6">
-          <div className="min-w-0">
-            <span className={label} id="f-cat">Categoria</span>
-            <nav className="scrollbar-none -mx-3 flex gap-2 overflow-x-auto px-3 sm:mx-0 sm:px-0" aria-labelledby="f-cat">
-              {[{ value: "", label: "Tudo", count: total }, ...categories].map((c) => {
-                const on = categoria === c.value;
-                return (
-                  <button
-                    key={c.value || "tudo"}
-                    onClick={() => set({ categoria: c.value })}
-                    aria-pressed={on}
-                    className={`chamfer-sm flex shrink-0 items-center gap-2 px-4 py-2.5 text-[0.95rem] font-bold transition-colors ${
-                      on ? "bg-ember text-void" : "bg-plate/70 text-chalk hover:bg-plate-2"
-                    }`}
-                  >
-                    {c.label}
-                    <span className={`tabular text-xs font-semibold ${on ? "opacity-80" : "text-dim"}`}>{c.count}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 lg:justify-end">
-            <select
-              className="field h-10 w-auto min-w-[150px] text-sm"
-              value={ordem}
-              onChange={(e) => set({ ordem: e.target.value })}
-              aria-label="Ordenar por"
-            >
-              {sorts.map(([v, l]) => (
-                <option key={v} value={v}>{l}</option>
-              ))}
-            </select>
-            {filtered && (
+      <div className="relative border-b border-line">
+        <nav className="scrollbar-none -mx-4 flex gap-6 overflow-x-auto px-4 sm:mx-0 sm:gap-8 sm:px-0" aria-label="Categoria">
+          {[{ value: "", label: "Tudo", count: total }, ...categories].map((c) => {
+            const on = categoria === c.value;
+            return (
               <button
-                onClick={() => start(() => router.push(pathname, { scroll: false }))}
-                className="flex h-10 items-center gap-1 px-2 text-sm font-semibold text-ember hover:text-gold"
+                key={c.value || "tudo"}
+                onClick={() => set({ categoria: c.value })}
+                aria-pressed={on}
+                className={`relative flex shrink-0 items-baseline gap-1.5 pb-3 pt-1 transition-colors ${on ? "text-chalk" : "text-dim hover:text-chalk"}`}
               >
-                <X className="size-4" /> Limpar
+                <span className="display text-[1.35rem] sm:text-[1.6rem]">{c.label}</span>
+                <span className="tabular text-xs font-semibold">{c.count}</span>
+                {on && <span className="absolute inset-x-0 -bottom-px h-[3px] bg-ember" />}
               </button>
-            )}
-          </div>
-        </div>
+            );
+          })}
+        </nav>
+        <div className={`absolute inset-x-0 -bottom-px h-[3px] origin-left bg-ember/50 transition-all duration-300 ${pending ? "w-full opacity-100" : "w-0 opacity-0"}`} />
+      </div>
 
-        <div className="mt-3 grid gap-3 border-t border-line/60 pt-3 sm:mt-4 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-6 sm:pt-4">
-          <div className="min-w-0">
-            <span className={label} id="f-plat">Plataforma</span>
-            <div className="scrollbar-none -mx-3 flex gap-1.5 overflow-x-auto px-3 sm:mx-0 sm:px-0" role="group" aria-labelledby="f-plat">
-              {platforms.map((p) => {
-                const on = plataforma === p.value;
-                return (
-                  <button
-                    key={p.value}
-                    onClick={() => set({ plataforma: on ? "" : p.value })}
-                    aria-pressed={on}
-                    className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
-                      on ? "bg-chalk text-void" : "bg-plate/60 text-fog hover:bg-plate-2 hover:text-chalk"
-                    }`}
-                  >
-                    {p.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div>
-            <span className={label} id="f-cond">Condição</span>
-            <div className="inline-flex rounded-full bg-plate/60 p-0.5" role="group" aria-labelledby="f-cond">
-              {conditions.map(([v, l]) => (
-                <button
-                  key={v}
-                  onClick={() => set({ condicao: v })}
-                  aria-pressed={condicao === v}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors ${condicao === v ? "bg-chalk text-void" : "text-fog hover:text-chalk"}`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className={`absolute inset-x-0 bottom-0 h-[2px] origin-left bg-ember transition-all duration-300 ${pending ? "w-full opacity-100" : "w-0 opacity-0"}`} />
+      <div className="scrollbar-none -mx-4 mt-3 flex items-center gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        {platforms.map((p) => (
+          <button key={p.value} onClick={() => set({ plataforma: plataforma === p.value ? "" : p.value })} aria-pressed={plataforma === p.value} className={chip(plataforma === p.value)}>
+            {p.label}
+          </button>
+        ))}
+        <span className="mx-1.5 h-4 w-px shrink-0 bg-line-strong" aria-hidden />
+        {conditions.slice(1).map(([v, l]) => (
+          <button key={v} onClick={() => set({ condicao: condicao === v ? "" : v })} aria-pressed={condicao === v} className={chip(condicao === v)}>
+            {l}
+          </button>
+        ))}
+        {filtered && (
+          <button onClick={() => start(() => router.push(pathname, { scroll: false }))} className="flex shrink-0 items-center gap-1 pl-2 text-[0.8rem] font-semibold text-ember hover:text-gold">
+            <X className="size-3.5" /> Limpar
+          </button>
+        )}
+        <select className="field ml-auto h-8 w-auto shrink-0 !py-0 text-[0.8rem]" value={ordem} onChange={(e) => set({ ordem: e.target.value })} aria-label="Ordenar por">
+          {sorts.map(([v, l]) => (
+            <option key={v} value={v}>{l}</option>
+          ))}
+        </select>
       </div>
     </div>
   );
