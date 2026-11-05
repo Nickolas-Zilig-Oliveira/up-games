@@ -64,7 +64,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
             <div className="flex justify-between text-sm">
               <span className="text-fog">Estoque</span>
               <span className={`tabular font-semibold ${p.stock <= p.minStock ? "text-ember" : "text-chalk"}`}>
-                {p.stock <= 0 ? "Esgotado" : p.stock <= p.minStock ? `Últimas ${p.stock} unidades` : `${p.stock} disponíveis`}
+                {p.stock <= 0 ? "Esgotado" : p.stock === 1 ? "Última unidade" : p.stock <= p.minStock ? `Últimas ${p.stock} unidades` : `${p.stock} disponíveis`}
               </span>
             </div>
             <div className="mt-2 flex gap-[3px]" aria-hidden>
@@ -80,7 +80,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
 
           <BuyBox line={toCartLine(p)} favorite={!!user?.favorites.includes(p.id)} loggedIn={!!user} />
 
-          <ul className="mt-6 grid gap-3 text-sm sm:grid-cols-3 lg:mt-8">
+          <ul className="chamfer-sm mt-6 grid gap-3 bg-deep p-4 text-sm sm:p-5 lg:mt-8">
             <li className="flex gap-2.5 text-fog">
               <Store className="size-5 shrink-0 text-ember" /> Retire na loja no mesmo dia
             </li>

@@ -19,6 +19,11 @@ export default async function Home() {
   const featured = filterProducts(products.filter((p) => p.featured), {}).slice(0, 10);
   // Produtos cadastrados por último ficam no fim da lista: os mais novos vêm primeiro.
   const latest = [...products].filter((p) => p.stock > 0).reverse().slice(0, 10);
+  const platforms = Object.entries(
+    products.reduce<Record<string, number>>((acc, p) => ({ ...acc, [p.platform]: (acc[p.platform] ?? 0) + 1 }), {}),
+  )
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
   const today = new Date().getDay(); // 0 = domingo
   const todayIdx = today === 0 ? 6 : today - 1;
 
@@ -58,6 +63,29 @@ export default async function Home() {
       {banners.length > 0 && (
         <section className="mx-auto max-w-[1320px] px-4 sm:px-6" aria-label="Promoções">
           <BannerCarousel banners={banners} />
+        </section>
+      )}
+
+      {/* PLATAFORMAS: atalho direto para o catálogo filtrado */}
+      {platforms.length > 0 && (
+        <section className="mx-auto mt-14 max-w-[1320px] px-4 sm:px-6 lg:mt-16" aria-labelledby="plataformas">
+          <h2 id="plataformas" className="display t-tool mb-4">Compre por plataforma</h2>
+          <ul className="scrollbar-none -mx-4 flex gap-2.5 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible sm:px-0 xl:grid-cols-8">
+            {platforms.map((pl) => (
+              <li key={pl.name} className="w-[8.25rem] shrink-0 sm:w-auto">
+                <Link
+                  href={`/loja?plataforma=${encodeURIComponent(pl.name)}`}
+                  className="chamfer-sm group flex h-full items-end justify-between gap-2 bg-deep p-4 transition-colors hover:bg-plate-2"
+                >
+                  <span>
+                    <span className="display block text-2xl leading-none">{pl.name}</span>
+                    <span className="mt-1.5 block text-xs text-dim">{pl.count} {pl.count === 1 ? "item" : "itens"}</span>
+                  </span>
+                  <ArrowUpRight className="size-4 shrink-0 text-dim transition-colors group-hover:text-ember" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
@@ -111,38 +139,43 @@ export default async function Home() {
 
       {/* VISITE */}
       <section id="visite" className="mx-auto mt-20 max-w-[1320px] scroll-mt-28 px-4 sm:px-6 lg:mt-24">
-        <div>
-          <h2 className="display t-section">Passa na loja</h2>
-          <p className="mt-3 max-w-[42ch] text-fog">
-            O espaço é todo temático, com miniaturas Marvel e DC. Retire seu pedido no mesmo dia.
-          </p>
-          <div className="mt-6 space-y-3">
-            <p className="flex gap-3">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-ember" />
-              <span>{s.address}</span>
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
+          <div className="self-center">
+            <h2 className="display t-section">Passa na loja</h2>
+            <p className="mt-3 max-w-[42ch] text-fog">
+              O espaço é todo temático, com miniaturas Marvel e DC. Retire seu pedido no mesmo dia.
             </p>
-            <p className="flex gap-3">
-              <Phone className="mt-0.5 size-5 shrink-0 text-ember" />
-              <a href={`tel:+${s.whatsapp}`} className="hover:text-ember">{s.phone}</a>
-            </p>
+            <div className="mt-6 space-y-3">
+              <p className="flex gap-3">
+                <MapPin className="mt-0.5 size-5 shrink-0 text-ember" />
+                <span>{s.address}</span>
+              </p>
+              <p className="flex gap-3">
+                <Phone className="mt-0.5 size-5 shrink-0 text-ember" />
+                <a href={`tel:+${s.whatsapp}`} className="hover:text-ember">{s.phone}</a>
+              </p>
+            </div>
+            <a href={s.mapsUrl} target="_blank" rel="noreferrer" className="btn btn-ember mt-7 h-12 px-6">
+              Abrir rota no Google Maps <ArrowUpRight className="size-4" />
+            </a>
           </div>
-          <table className="mt-6 w-full max-w-sm text-sm">
-            <caption className="sr-only">Horário de funcionamento</caption>
-            <tbody>
-              {s.hours.map((h, k) => (
-                <tr key={h.day} className={`border-b border-line ${k === todayIdx ? "font-semibold text-chalk" : "text-fog"}`}>
-                  <td className="py-2.5">
-                    {h.day}
-                    {k === todayIdx && <span className="ml-2 text-xs font-bold text-ember">hoje</span>}
-                  </td>
-                  <td className="tabular py-2.5 text-right">{h.closed ? "Fechado" : `${h.open} – ${h.close}`}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <a href={s.mapsUrl} target="_blank" rel="noreferrer" className="btn btn-ghost mt-6">
-            Abrir rota no Google Maps <ArrowUpRight className="size-4" />
-          </a>
+          <div className="chamfer-sm bg-deep p-5 sm:p-7">
+            <h3 className="mb-2 font-semibold">Horário de funcionamento</h3>
+            <table className="w-full text-sm">
+              <caption className="sr-only">Horário de funcionamento</caption>
+              <tbody>
+                {s.hours.map((h, k) => (
+                  <tr key={h.day} className={`border-b border-line last:border-0 ${k === todayIdx ? "font-semibold text-chalk" : "text-fog"}`}>
+                    <td className="py-3">
+                      {h.day}
+                      {k === todayIdx && <span className="ml-2 text-xs font-bold text-ember">hoje</span>}
+                    </td>
+                    <td className="tabular py-3 text-right">{h.closed ? "Fechado" : `${h.open} – ${h.close}`}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
     </>

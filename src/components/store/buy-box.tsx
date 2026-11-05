@@ -52,15 +52,15 @@ export function BuyBox({ line, favorite, loggedIn }: { line: Omit<CartLine, "qty
   return (
     <>
       {/* Desktop */}
-      <div className="mt-8 hidden flex-wrap gap-3 lg:flex">
+      <div className="mt-8 hidden gap-3 lg:flex">
         {!soldOut && (
-          <div className="chamfer-sm flex h-14 items-center bg-plate">
-            <button className="grid size-12 place-items-center text-fog hover:text-chalk" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Diminuir quantidade">
+          <div className="chamfer-sm flex h-14 shrink-0 items-center bg-plate">
+            <button className="grid size-11 place-items-center text-fog hover:text-chalk" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Diminuir quantidade">
               <Minus className="size-4" />
             </button>
-            <span className="tabular w-8 text-center text-lg font-bold">{qty}</span>
+            <span className="tabular w-6 text-center text-lg font-bold">{qty}</span>
             <button
-              className="grid size-12 place-items-center text-fog hover:text-chalk disabled:opacity-30"
+              className="grid size-11 place-items-center text-fog hover:text-chalk disabled:opacity-30"
               onClick={() => setQty((q) => Math.min(line.stock, q + 1))}
               disabled={qty >= line.stock}
               aria-label="Aumentar quantidade"
