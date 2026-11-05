@@ -61,7 +61,7 @@ export function FilterBar({ categories, platforms, total }: { categories: Option
                 aria-pressed={on}
                 className={`relative flex shrink-0 items-baseline gap-1.5 pb-3 pt-1 transition-colors ${on ? "text-chalk" : "text-dim hover:text-chalk"}`}
               >
-                <span className="display text-[1.35rem] sm:text-[1.6rem]">{c.label}</span>
+                <span className="display max-w-[15rem] truncate text-[1.35rem] sm:text-[1.6rem]">{c.label}</span>
                 <span className="tabular text-xs font-semibold">{c.count}</span>
                 {on && <span className="absolute inset-x-0 -bottom-px h-[3px] bg-ember" />}
               </button>

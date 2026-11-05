@@ -37,7 +37,7 @@ export function ProductCard({ p }: { p: CardProduct }) {
                 <span className="rarity-text">{rarityLabel[p.rarity]}</span>
                 <span className="font-semibold text-dim">· {p.condition === "novo" ? "Novo" : "Seminovo"}</span>
               </p>
-              <h3 className="mt-2 line-clamp-3 min-h-[3.9em] text-[0.95rem] font-semibold leading-[1.3] text-chalk">{p.name}</h3>
+              <h3 className="mt-2 line-clamp-3 wrap-anywhere min-h-[3.9em] text-[0.95rem] font-semibold leading-[1.3] text-chalk">{p.name}</h3>
               <div className="mt-3 flex items-baseline gap-2">
                 <span className="tabular text-lg font-bold">{money(p.price)}</span>
                 {discount > 0 && <span className="tabular text-xs text-dim line-through">{money(p.comparePrice!)}</span>}

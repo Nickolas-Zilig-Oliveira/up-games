@@ -33,34 +33,47 @@ export function LootDrop({ items }: { items: DropItem[] }) {
 
   return (
     <div data-rarity={item.rarity} className="relative mx-auto w-full max-w-[560px] select-none">
-      {/* Palco */}
+      {/* Palco: uma vitrine com holofote, na cor da raridade */}
       <div className="relative aspect-[1/1.02] w-full">
-        <UpStar className="spin-slow absolute inset-[6%] text-plate/70" />
         <div
-          className="absolute inset-[18%] rounded-full blur-3xl transition-[background] duration-700"
-          style={{ background: "color-mix(in srgb, var(--r) 22%, transparent)" }}
-        />
-        {/* Feixe */}
-        <div
-          className="beam absolute left-1/2 top-0 h-[78%] w-[46%] -translate-x-1/2 transition-[background] duration-500"
-          style={{
-            background: "linear-gradient(180deg, transparent, color-mix(in srgb, var(--r) 38%, transparent) 55%, color-mix(in srgb, var(--r) 60%, transparent))",
-            clipPath: "polygon(38% 0, 62% 0, 100% 100%, 0 100%)",
-          }}
-        />
-        {/* Pedestal */}
-        <div className="absolute bottom-[11%] left-1/2 h-[9%] w-[62%] -translate-x-1/2">
+          className="chamfer absolute inset-0 p-px"
+          style={{ "--cut": "30px", background: "linear-gradient(160deg, color-mix(in srgb, var(--r) 50%, transparent), transparent 55%)" } as React.CSSProperties}
+        >
+          <div
+            className="chamfer h-full w-full transition-[background] duration-700"
+            style={{
+              "--cut": "30px",
+              background:
+                "radial-gradient(70% 58% at 50% 34%, color-mix(in srgb, var(--r) 24%, transparent), transparent 72%), radial-gradient(90% 40% at 50% 100%, color-mix(in srgb, var(--r) 14%, transparent), transparent 70%), color-mix(in srgb, var(--color-deep) 62%, transparent)",
+            } as React.CSSProperties}
+          />
+        </div>
+        <UpStar className="spin-slow absolute inset-[10%] text-plate/30" />
+        {/* Holofote: cone com bordas suaves */}
+        <div className="beam absolute left-1/2 top-0 h-[80%] w-[60%] -translate-x-1/2 blur-xl">
+          <div
+            className="h-full w-full transition-[background] duration-500"
+            style={{
+              background: "linear-gradient(180deg, color-mix(in srgb, var(--r) 10%, transparent), color-mix(in srgb, var(--r) 34%, transparent) 60%, color-mix(in srgb, var(--r) 55%, transparent))",
+              clipPath: "polygon(36% 0, 64% 0, 100% 100%, 0 100%)",
+            }}
+          />
+        </div>
+        {/* Pedestal com anéis */}
+        <div className="absolute bottom-[11%] left-1/2 h-[9%] w-[56%] -translate-x-1/2">
+          <div className="absolute -inset-x-[26%] -inset-y-[110%] rounded-[50%] border transition-colors duration-500" style={{ borderColor: "color-mix(in srgb, var(--r) 14%, transparent)" }} />
+          <div className="absolute -inset-x-[12%] -inset-y-[55%] rounded-[50%] border transition-colors duration-500" style={{ borderColor: "color-mix(in srgb, var(--r) 26%, transparent)" }} />
           <div className="absolute inset-0 rounded-[50%] border border-line-strong bg-deep/80" />
           <div
             className="absolute inset-x-[12%] top-[18%] h-[64%] rounded-[50%] transition-[background] duration-500"
-            style={{ background: "radial-gradient(closest-side, color-mix(in srgb, var(--r) 70%, transparent), transparent)" }}
+            style={{ background: "radial-gradient(closest-side, color-mix(in srgb, var(--r) 75%, transparent), transparent)" }}
           />
         </div>
 
         <AnimatePresence mode="popLayout">
           <motion.div
             key={`${item.id}-${rolls}`}
-            className="absolute left-1/2 top-[9%] w-[50%] -translate-x-1/2"
+            className="absolute left-1/2 top-[9%] w-[50%] -translate-x-1/2 [filter:drop-shadow(0_20px_26px_color-mix(in_srgb,var(--r)_38%,transparent))]"
             initial={reduce ? { opacity: 0 } : { y: -180, opacity: 0, rotate: -8, scale: 0.86 }}
             animate={{ y: 0, opacity: 1, rotate: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { y: 40, opacity: 0, scale: 0.9, transition: { duration: 0.18 } }}

@@ -59,7 +59,7 @@ export default async function Loja({ searchParams }: PageProps<"/loja">) {
             <section key={r.id} aria-label={r.name ?? "Resultado"}>
               {r.name && (
                 <div className="mb-4 flex items-baseline justify-between gap-4">
-                  <h2 className="display t-tool flex items-baseline gap-2.5">
+                  <h2 className="display t-tool flex min-w-0 items-baseline gap-2.5 wrap-anywhere">
                     {r.name}
                     <span className="tabular font-sans text-sm font-semibold text-dim">{r.items.length}</span>
                   </h2>

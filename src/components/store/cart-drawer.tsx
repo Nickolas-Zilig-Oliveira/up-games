@@ -90,7 +90,7 @@ export function CartDrawer({ freeShippingOver }: { freeShippingOver: number }) {
                           <ProductArt image={l.image} name={l.name} platform={l.platform} rarity={l.rarity} icon={l.categoryIcon} size="sm" />
                         </Link>
                         <div className="flex min-w-0 flex-1 flex-col">
-                          <p className="line-clamp-2 text-[0.95rem] font-semibold leading-snug">{l.name}</p>
+                          <p className="line-clamp-2 text-[0.95rem] font-semibold leading-snug wrap-anywhere">{l.name}</p>
                           <p className="text-xs text-dim">{l.platform}</p>
                           <div className="mt-auto flex items-center justify-between pt-2">
                             <div className="flex items-center bg-plate">

@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 };
 
 async function currentTheme() {
-  // Padrão é o modo claro; quem escolher o escuro fica salvo em cookie.
-  return (await cookies()).get("up_theme")?.value === "dark" ? "dark" : "light";
+  // Padrão é o modo escuro; quem escolher o claro fica salvo em cookie.
+  return (await cookies()).get("up_theme")?.value === "light" ? "light" : "dark";
 }
 
 // Loja usada no celular: sem zoom por pinça ou toque duplo, a tela fica no lugar.

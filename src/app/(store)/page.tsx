@@ -70,15 +70,15 @@ export default async function Home() {
       {platforms.length > 0 && (
         <section className="mx-auto mt-14 max-w-[1320px] px-4 sm:px-6 lg:mt-16" aria-labelledby="plataformas">
           <h2 id="plataformas" className="display t-tool mb-4">Compre por plataforma</h2>
-          <ul className="scrollbar-none -mx-4 flex gap-2.5 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible sm:px-0 xl:grid-cols-8">
+          <ul className="scrollbar-none -mx-4 flex gap-2.5 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-3 sm:overflow-visible sm:px-0 2xl:grid-cols-8">
             {platforms.map((pl) => (
               <li key={pl.name} className="w-[8.25rem] shrink-0 sm:w-auto">
                 <Link
                   href={`/loja?plataforma=${encodeURIComponent(pl.name)}`}
-                  className="chamfer-sm group flex h-full items-end justify-between gap-2 bg-deep p-4 transition-colors hover:bg-plate-2"
+                  className="chamfer-sm group flex h-full min-w-0 items-end justify-between gap-2 bg-deep p-4 transition-colors hover:bg-plate-2"
                 >
-                  <span>
-                    <span className="display block text-2xl leading-none">{pl.name}</span>
+                  <span className="min-w-0">
+                    <span className="display block text-[1.35rem] leading-none wrap-anywhere">{pl.name}</span>
                     <span className="mt-1.5 block text-xs text-dim">{pl.count} {pl.count === 1 ? "item" : "itens"}</span>
                   </span>
                   <ArrowUpRight className="size-4 shrink-0 text-dim transition-colors group-hover:text-ember" />

@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: PageProps<"/produto/[slug]
             <span className="rarity-text">{rarityLabel[p.rarity]}</span>
             <span className="font-medium text-dim">/ {p.platform} / {p.condition === "novo" ? "Novo" : "Seminovo"}</span>
           </p>
-          <h1 className="display t-section mt-3 text-balance">{p.name}</h1>
+          <h1 className="display t-section mt-3 text-balance wrap-anywhere">{p.name}</h1>
 
           <div className="mt-4 flex flex-wrap items-baseline gap-3 lg:mt-6">
             <span className="tabular text-3xl font-bold sm:text-4xl">{money(p.price)}</span>
